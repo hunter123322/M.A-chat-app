@@ -1,6 +1,9 @@
 {
   "dependencies": {
-    "express": "^4.21.1"
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^5.0.1",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
