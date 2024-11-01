@@ -4,6 +4,9 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Server } from "socket.io";
+import mongoose from "mongoose";
+import messageSchema from "./model/message.js";
+import mongoDBconnection from "./controller/mongodbConnection.js";
 
 dotenv.config();
 
@@ -14,6 +17,8 @@ const io = new Server(server);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const messageModel = mongoose.model("message", messageSchema);
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../src/views"));
 
@@ -21,7 +26,7 @@ app.use(express.static("public"));
 
 app.get("/socket/v1", async (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, "../public/index.html",));
+    res.sendFile(path.join(__dirname, "../public/index.html"));
   } catch (error) {
     res.status(500);
     console.log(error);
@@ -38,12 +43,21 @@ app.get("/socket/v2", async (req, res) => {
 });
 
 io.on("connection", async (socket: any) => {
+  await mongoDBconnection();
   console.log(`a user connected ${socket}`);
-  socket.on('chatMessage', (msg) => {
-    // braodcast the message
-  })
+
+  socket.on("chatMessage", async (msg: string) => {
+    const messageObj = { content: msg };
+    const saveMessage = new messageModel(messageObj);
+    await saveMessage.save();
+
+    socket.broadcast.emit("chatMessages", msg);
+  });
+  socket.on("disconnet", () => {
+    console.log("user disconnected");
+  });
 });
 
 server.listen(PORT, () => {
-  console.log('server is runing')
-})
+  console.log("server is runing");
+});
