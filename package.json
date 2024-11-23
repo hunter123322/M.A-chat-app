@@ -1,9 +1,16 @@
 {
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/connect-mongo": "^3.1.6",
+    "@types/express-session": "^1.18.0",
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^5.0.1",
+    "express-session": "^1.18.1",
     "mongoose": "^8.8.0",
+    "mysql2": "^3.11.4",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

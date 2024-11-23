@@ -1,0 +1,7 @@
+use (-) to sign if its done 
+use (x) if pending task or not done yet
+use (u) undone things or can't finish the task
+
+- sign up routes
+- log in routes
+- simple socket.io server 
