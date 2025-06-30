@@ -1,211 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Landing Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Popup Menu</title>
+    <style>
+        :root {
+          --primary-dark: rgb(102, 101, 101);
+          --secondary-dark: rgb(85, 85, 85);
+          --contact-bg: rgb(112, 79, 79);
+          --message-bg: rgb(144, 144, 144);
+          --my-message-bg: rgb(216, 216, 216);
+          --hover-light: rgba(255, 255, 255, 0.1);
+          --transition-speed: 0.3s;
+        }
 
-  <!-- Link to Google Fonts for styling -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Link to jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <style>
-    /* Basic reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Roboto', sans-serif;
-      line-height: 1.6;
-      background-color: #f4f4f4;
-    }
-
-    /* Header Styles */
-    header {
-      background: #333;
-      color: white;
-      padding: 20px 0;
-      text-align: center;
-    }
-
-    header h1 {
-      font-size: 2.5rem;
-    }
-
-    /* Hero Section */
-    .hero {
-      background: url('https://via.placeholder.com/1200x600') no-repeat center center/cover;
-      color: white;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-
-    .hero h2 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-    }
-
-    .cta-button {
-      background-color: #ff5733;
-      color: white;
-      padding: 15px 30px;
-      text-decoration: none;
-      font-size: 1.2rem;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-
-    .cta-button:hover {
-      background-color: #c7451c;
-    }
-
-    /* Features Section */
-    .features {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      padding: 50px 0;
-    }
-
-    .feature-box {
-      background: white;
-      border: 1px solid #ddd;
-      padding: 20px;
-      width: 300px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .feature-box h3 {
-      margin-bottom: 20px;
-    }
-
-    .feature-box p {
-      font-size: 1rem;
-    }
-
-    /* Footer */
-    footer {
-      background: #333;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-
-    footer p {
-      font-size: 1rem;
-    }
-
-    /* Form Section */
-    .form-container {
-      padding: 50px;
-      background-color: #fff;
-      max-width: 600px;
-      margin: 0 auto;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-    }
-
-    .form-container input, .form-container button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-    }
-
-    .form-container button {
-      background-color: #ff5733;
-      color: white;
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-
-    .form-container button:hover {
-      background-color: #c7451c;
-    }
-  </style>
+        body {
+          background-color: white;
+          font-family: "Segoe UI", Arial, sans-serif;
+          display: flex;
+          min-height: 100vh;
+          line-height: 1.5;
+          margin: 0;
+          justify-content: center;
+          align-items: center;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <script>
+        // Create style element dynamically
+        const style = document.createElement('style');
+        style.textContent = `
+            .menu-container {
+                position: relative;
+                width: 300px;
+                background: var(--my-message-bg);
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            .menu-button {
+                background: none;
+                border: none;
+                font-size: 26px;
+                cursor: pointer;
+                padding: 6px 12px;
+                border-radius: 6px;
+                color: var(--primary-dark);
+                transition: all var(--transition-speed) ease;
+                margin-left: auto;
+                display: block;
+            }
+            
+            .menu-button:hover {
+                background-color: var(--hover-light);
+                transform: scale(1.1);
+            }
+            
+            .popup-menu {
+                position: absolute;
+                top: calc(100% + 8px);
+                right: 0;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                padding: 6px 0;
+                width: 160px;
+                z-index: 100;
+                opacity: 0;
+                transform: translateY(-10px);
+                visibility: hidden;
+                flex-direction: column;
+                border: 1px solid var(--message-bg);
+                transition: all var(--transition-speed) ease;
+            }
+            
+            .popup-menu.show {
+                opacity: 1;
+                transform: translateY(0);
+                visibility: visible;
+            }
+            
+            .menu-item {
+                padding: 10px 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: var(--primary-dark);
+                transition: all var(--transition-speed) ease;
+                font-size: 15px;
+            }
+            
+            .menu-item:hover {
+                background-color: var(--my-message-bg);
+                padding-left: 20px;
+            }
+            
+            .menu-item i {
+                font-size: 16px;
+                color: var(--secondary-dark);
+                width: 20px;
+                text-align: center;
+                transition: transform var(--transition-speed) ease;
+            }
+            
+            .menu-item:hover i {
+                transform: scale(1.15);
+            }
+            
+            .divider {
+                height: 1px;
+                background-color: var(--message-bg);
+                margin: 4px 0;
+                opacity: 0.3;
+            }
+            
+            .danger {
+                color: #e74c3c !important;
+            }
+            
+            .danger i {
+                color: #e74c3c !important;
+            }
+        `;
+        document.head.appendChild(style);
 
-  <!-- Header Section -->
-  <header>
-    <h1>Welcome to Our Service</h1>
-  </header>
+        // Menu configuration
+        const menuItems = [
+            { icon: 'fa-edit', text: 'Edit', action: () => console.log('Edit clicked') },
+            { icon: 'fa-copy', text: 'Copy', action: () => console.log('Copy clicked') },
+            { type: 'divider' },
+            { icon: 'fa-smile', text: 'React', action: () => console.log('React clicked') },
+            { type: 'divider' },
+            { icon: 'fa-trash', text: 'Delete', action: () => console.log('Delete clicked'), class: 'danger' }
+        ];
 
-  <!-- Hero Section -->
-  <div class="hero">
-    <div>
-      <h2>Transform Your Business</h2>
-      <p>Get started with the best tools for your growth!</p>
-      <a href="#form" class="cta-button">Get Started</a>
-    </div>
-  </div>
+        // Create container
+        const container = document.createElement('div');
+        container.className = 'menu-container';
+        document.body.appendChild(container);
 
-  <!-- Features Section -->
-  <div class="features">
-    <div class="feature-box">
-      <h3>Feature 1</h3>
-      <p>Explanation of the first feature of the service.</p>
-    </div>
-    <div class="feature-box">
-      <h3>Feature 2</h3>
-      <p>Explanation of the second feature of the service.</p>
-    </div>
-    <div class="feature-box">
-      <h3>Feature 3</h3>
-      <p>Explanation of the third feature of the service.</p>
-    </div>
-  </div>
+        // Create menu button
+        const menuButton = document.createElement('button');
+        menuButton.className = 'menu-button';
+        menuButton.textContent = '⋮';
+        container.appendChild(menuButton);
 
-  <!-- Form Section -->
-  <div id="form" class="form-container">
-    <h3>Sign Up Now</h3>
-    <form id="signup-form">
-      <input type="text" id="name" placeholder="Your Name" required>
-      <input type="email" id="email" placeholder="Your Email" required>
-      <button type="submit">Sign Up</button>
-    </form>
-  </div>
+        // Create popup menu
+        const popupMenu = document.createElement('div');
+        popupMenu.className = 'popup-menu';
+        container.appendChild(popupMenu);
 
-  <!-- Footer Section -->
-  <footer>
-    <p>&copy; 2024 Our Service. All rights reserved.</p>
-  </footer>
+        // Create menu items
+        menuItems.forEach(item => {
+            if (item.type === 'divider') {
+                const divider = document.createElement('div');
+                divider.className = 'divider';
+                popupMenu.appendChild(divider);
+            } else {
+                const menuItem = document.createElement('div');
+                menuItem.className = `menu-item ${item.class || ''}`;
+                
+                const icon = document.createElement('i');
+                icon.className = `fas ${item.icon}`;
+                menuItem.appendChild(icon);
+                
+                const text = document.createElement('span');
+                text.textContent = item.text;
+                menuItem.appendChild(text);
+                
+                menuItem.addEventListener('click', () => {
+                    item.action();
+                    popupMenu.classList.remove('show');
+                    
+                    // Visual feedback
+                    menuItem.style.backgroundColor = 'rgba(0,0,0,0.1)';
+                    setTimeout(() => {
+                        menuItem.style.backgroundColor = '';
+                    }, 300);
+                });
+                
+                popupMenu.appendChild(menuItem);
+            }
+        });
 
-  <!-- jQuery Script -->
-  <script>
-    // jQuery for smooth scrolling when clicking the "Get Started" button
-    $(document).ready(function() {
-      $('a.cta-button').on('click', function(event) {
-        event.preventDefault();
-        $('html, body').animate({
-          scrollTop: $('#form').offset().top
-        }, 1000);
-      });
+        // Toggle menu visibility
+        menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popupMenu.classList.toggle('show');
+        });
 
-      // jQuery for form validation
-      $('#signup-form').on('submit', function(event) {
-        event.preventDefault();
-        let name = $('#name').val();
-        let email = $('#email').val();
-
-        if (name === "" || email === "") {
-          alert("Please fill out all fields.");
-        } else {
-          alert("Thank you for signing up, " + name + "!");
-        }
-      });
-    });
-  </script>
-
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!popupMenu.contains(e.target) && e.target !== menuButton) {
+                popupMenu.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

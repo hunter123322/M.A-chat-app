@@ -170,32 +170,7 @@ body {
   gap: 0.75rem;
 }
 
-.text {
-  background-color: var(--message-bg);
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  max-width: 75%;
-  word-wrap: break-word;
-  align-self: flex-start;
-  transition: all var(--transition-speed) ease;
-}
 
-.text:hover {
-  background-color: color-mix(in srgb, var(--message-bg), black 10%);
-}
-
-.myText {
-  background-color: var(--my-message-bg);
-  align-self: flex-end;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  word-wrap: break-word;
-  transition: all var(--transition-speed) ease;
-}
-
-.myText:hover {
-  background-color: color-mix(in srgb, var(--my-message-bg), black 5%);
-}
 
 /* Input Area */
 #input {
@@ -303,4 +278,137 @@ body {
 
 #logoutButton:hover {
   background-color: var(--hover-light);
+}
+
+
+
+
+/* asdasdsad */
+/* Message bubbles */
+.text, .myText {
+  position: relative; /* Needed for absolute menu positioning */
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  max-width: 75%;
+  word-wrap: break-word;
+  transition: all var(--transition-speed) ease;
+}
+
+.text {
+  background-color: var(--message-bg);
+  align-self: flex-start;
+}
+
+.text:hover {
+  background-color: color-mix(in srgb, var(--message-bg), black 10%);
+}
+
+.myText {
+  background-color: var(--my-message-bg);
+  align-self: flex-end;
+}
+
+.myText:hover {
+  background-color: color-mix(in srgb, var(--my-message-bg), black 5%);
+}
+
+/* Menu container */
+.menu-container {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: none;
+  z-index: 10;
+}
+
+/* Menu button */
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--primary-dark);
+  transition: all var(--transition-speed) ease;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: 4px;
+}
+
+.menu-button:hover {
+  background-color: var(--hover-light);
+}
+
+/* Popup menu */
+.popup-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  width: 10rem;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--hover-light);
+  border: 1px solid var(--message-bg);
+  transition: all var(--transition-speed) ease;
+}
+
+.popup-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* Menu item */
+.menu-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--primary-dark);
+  transition: all var(--transition-speed) ease;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.menu-item:hover {
+  background-color: var(--my-message-bg);
+  padding-left: 1.25rem;
+}
+
+/* Menu icons */
+.menu-item i {
+  font-size: 0.875rem;
+  color: var(--secondary-dark);
+  width: 1.25rem;
+  text-align: center;
+  transition: transform var(--transition-speed) ease;
+}
+
+.menu-item:hover i {
+  transform: scale(1.15);
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background-color: var(--message-bg);
+  margin: 0.25rem 0;
+  opacity: 0.3;
+}
+
+/* Danger item */
+.danger {
+  color: #e74c3c !important;
+}
+
+.danger i {
+  color: #e74c3c !important;
 }

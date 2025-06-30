@@ -48,12 +48,98 @@ document.querySelectorAll(".contact-card").forEach((card) => {
   });
 });
 
+
+
+// -- //
+
+const menuItems = [
+  { icon: 'fa-edit', text: 'Edit', action: () => console.log('Edit clicked') },
+  { icon: 'fa-copy', text: 'Copy', action: () => console.log('Copy clicked') },
+  { type: 'divider' },
+  { icon: 'fa-smile', text: 'React', action: () => console.log('React clicked') },
+  { type: 'divider' },
+  { icon: 'fa-trash', text: 'Delete', action: () => console.log('Delete clicked'), class: 'danger' }
+];
+
 function displayMessage(text, isMine) {
+  const messageContainer = document.createElement("div");
+  messageContainer.classList.add(isMine ? "myText" : "text");
+
   const messageDiv = document.createElement("div");
-  messageDiv.classList.add(isMine ? "myText" : "text");
-  messageDiv.textContent = text;
+  messageDiv.className = "message-content";
   messageContainer.appendChild(messageDiv);
+
+  // Text content
+  const messageContent = document.createElement("span");
+  messageContent.textContent = text;
+  messageDiv.appendChild(messageContent);
+
+  // Menu container
+  const container = document.createElement('div');
+  container.className = 'menu-container';
+  messageDiv.appendChild(container);  // Attach to messageDiv
+
+  // Menu button
+  const menuButton = document.createElement('div');
+  menuButton.className = 'menu-button';
+  menuButton.textContent = '⋮';
+  container.appendChild(menuButton);
+
+  // Popup menu
+  const popupMenu = document.createElement('div');
+  popupMenu.className = 'popup-menu';
+  container.appendChild(popupMenu);
+
+  // Menu items
+  menuItems.forEach(item => {
+    if (item.type === 'divider') {
+      const divider = document.createElement('div');
+      divider.className = 'divider';
+      popupMenu.appendChild(divider);
+    } else {
+      const menuItem = document.createElement('div');
+      menuItem.className = `menu-item ${item.class || ''}`;
+
+      const icon = document.createElement('i');
+      icon.className = `fas ${item.icon}`;
+      menuItem.appendChild(icon);
+
+      const text = document.createElement('span');
+      text.textContent = item.text;
+      menuItem.appendChild(text);
+
+      menuItem.addEventListener('click', () => {
+        item.action();
+        popupMenu.classList.remove('show');
+
+        // Visual feedback
+        menuItem.style.backgroundColor = 'rgba(0,0,0,0.1)';
+        setTimeout(() => {
+          menuItem.style.backgroundColor = '';
+        }, 300);
+      });
+
+      popupMenu.appendChild(menuItem);
+    }
+  });
+
+  // Toggle popup
+  menuButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    popupMenu.classList.toggle('show');
+  });
+
+  // Hide popup on outside click
+  document.addEventListener('click', (e) => {
+    if (!popupMenu.contains(e.target) && e.target !== menuButton) {
+      popupMenu.classList.remove('show');
+    }
+  });
+
+  // Finally append message to the actual container on the page
+  document.getElementById('content').appendChild(messageContainer);
 }
+
 
 function filterMessage(localMessage, senderID, receiverID) {
   // 1. Handle case where localMessage isn't an array
