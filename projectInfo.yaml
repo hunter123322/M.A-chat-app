@@ -1,0 +1,89 @@
+project:
+  name: "Real-Time Chat Application"
+  type: "Web Application"
+  description: >
+    A full-featured real-time chat web application built using Node.js, Express, MongoDB, and MySQL. 
+    This project is developed as part of a project-based learning initiative, aiming to simulate production-grade systems 
+    and focus on backend engineering.
+
+purpose:
+  goals:
+    - Learn and implement real-time communication (WebSocket)
+    - Study session handling, encryption, and persistence
+    - Practice integrating SQL and NoSQL in one application
+    - Explore containerization and orchestration (Docker, Kubernetes)
+    - Apply clean architecture and coding practices (MVC, OOP)
+    - Improve Git workflow and DevOps readiness
+
+features:
+  authentication_and_security:
+    implemented:
+      - express-session
+      - parameterized queries (SQL injection prevention)
+      - helmet for XSS protection
+      - rate limiting
+      - CORS configuration
+  messaging:
+    private_messaging: true
+    group_messaging:
+      implemented: false
+  message_storage:
+    database: "MongoDB"
+  user_profiles:
+    storage: "MySQL"
+  blocking_system:
+    implemented: false
+  timestamps: true
+  code_structure:
+    pattern: "MVC"
+    refactor_target: "OOP"
+  dockerized:
+    implemented: false
+  kubernetes_ready: true
+
+tech_stack:
+  frontend:
+    - vanilla HTML
+    - CSS
+    - JavaScript
+  backend:
+    - Node.js
+    - Express.js
+  real_time:
+    - Socket.IO
+  database:
+    sql: MySQL
+    nosql: MongoDB
+  authentication:
+    - express-session
+    - secure cookies
+  devops:
+    - Docker
+    - Kubernetes (planned)
+    - Git
+
+project_structure:
+  root:
+    - config/
+    - schema/
+    - controller/
+    - routes/
+    - views/
+    - app.js
+    - Dockerfile
+
+status:
+  overall: "In Progress"
+  dockerization: "Planned"
+  group_chat: "Planned"
+  blocking_feature: "Planned"
+  kubernetes_integration: "Planned"
+  oop_refactor: "Planned"
+
+metadata:
+  author: "Hunter"
+  learning_based: true
+  license: "MIT"
+  version: "0.1.0"
+  visibility: "Public"
+
