@@ -1,17 +1,28 @@
 {
   "dependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/bcrypt": "^5.0.2",
     "@types/connect-mongo": "^3.1.6",
+    "@types/cors": "^2.8.17",
     "@types/express-session": "^1.18.0",
+    "@types/jest": "^29.5.14",
+    "@types/mongoose": "^5.11.97",
+    "@types/socket.io": "^3.0.2",
+    "@types/supertest": "^6.0.2",
     "bcrypt": "^5.1.1",
     "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "cpx": "^1.2.1",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^5.0.1",
     "express-session": "^1.18.1",
-    "mongoose": "^8.8.0",
+    "jest": "^29.7.0",
+    "mongoose": "^8.8.2",
     "mysql2": "^3.11.4",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -23,8 +34,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/app.js"
+    "test": "node try.js",
+    "start": "node dist/app.js",
+    "dev": "nodemon dist/app.js"
   },
   "author": "",
   "license": "ISC",

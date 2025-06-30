@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/socket.css" />
+    <title>Socket.IO Chat</title>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" />
+      <button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const userID = localStorage.getItem("user_id");
+
+      socket.emit("userID", userID);
+
+      document.getElementById("form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("input");
+        if (input.value) {
+          const msg = input.value;
+          socket.emit("chatMessage", msg);
+          input.value = "";
+        }
+      });
+
+      socket.on("chatMessages", (msg) => {
+        const messageContainer = document.createElement("div");
+        messageContainer.classList.add("message-bubble");
+
+        // Determine if the message is mine or others'
+        if (msg.userID === userID) {
+          messageContainer.classList.add("mine");
+        } else {
+          messageContainer.classList.add("theirs");
+        }
+
+        const userSpan = document.createElement("span");
+        userSpan.classList.add("username");
+        userSpan.textContent = `${msg.userID}: `;
+
+        const contentSpan = document.createElement("span");
+        contentSpan.classList.add("message-content");
+        contentSpan.textContent = msg.content;
+
+        messageContainer.appendChild(userSpan);
+        messageContainer.appendChild(contentSpan);
+
+        document.getElementById("messages").appendChild(messageContainer);
+      });
+    </script>
+  </body>
+</html>

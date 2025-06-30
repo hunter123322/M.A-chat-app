@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const url = process.env.mongoDbURL || "mongodb://localhost:27017/message";
+const url = process.env.mongoDbURL || "mongodb://localhost:27017/MA-chat-app";
 
 async function mongoDBconnection() {
   mongoose.connect(url);

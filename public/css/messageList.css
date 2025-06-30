@@ -1,0 +1,306 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-dark: rgb(102, 101, 101);
+  --secondary-dark: rgb(85, 85, 85);
+  --contact-bg: rgb(112, 79, 79);
+  --message-bg: rgb(144, 144, 144);
+  --my-message-bg: rgb(216, 216, 216);
+  --hover-light: rgba(255, 255, 255, 0.1);
+  --transition-speed: 0.3s;
+}
+
+body {
+  background-color: white;
+  font-family: "Segoe UI", Arial, sans-serif;
+  display: flex;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Navigation Section */
+#nav {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-dark);
+  padding: 0.5rem;
+}
+
+#profile {
+  background-color: var(--primary-dark);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  position: relative;
+  color: white;
+}
+
+#profilePicture {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+#name {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+#status {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+#searchContact {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 1rem;
+  transition: all var(--transition-speed) ease;
+}
+
+#searchContact:focus {
+  outline: 2px solid var(--my-message-bg);
+  transform: scale(1.02);
+}
+
+/* Contact List */
+#contactList {
+  background-color: rgb(218, 174, 174);
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: var(--contact-bg);
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  color: white;
+}
+
+.contact-card:hover {
+  background-color: color-mix(in srgb, var(--contact-bg), white 10%);
+}
+
+.profilePicture {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+.personName {
+  font-weight: 500;
+}
+
+/* Main Chat Area */
+#main {
+  width: 75%;
+  background-color: var(--primary-dark);
+  border-radius: 10px;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#contactProfile {
+  background-color: var(--secondary-dark);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+#contactProfilePicture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+#contactName {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+#contactStatus {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Messages Area */
+#message {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 68vh;
+}
+
+#messageBody {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.text {
+  background-color: var(--message-bg);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  max-width: 75%;
+  word-wrap: break-word;
+  align-self: flex-start;
+  transition: all var(--transition-speed) ease;
+}
+
+.text:hover {
+  background-color: color-mix(in srgb, var(--message-bg), black 10%);
+}
+
+.myText {
+  background-color: var(--my-message-bg);
+  align-self: flex-end;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  word-wrap: break-word;
+  transition: all var(--transition-speed) ease;
+}
+
+.myText:hover {
+  background-color: color-mix(in srgb, var(--my-message-bg), black 5%);
+}
+
+/* Input Area */
+#input {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+#inputMessage {
+  flex-grow: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: none;
+}
+
+#messagInputOption {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: bisque;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+#messagInputOption:hover {
+  background-color: var(--message-bg);
+  transform: scale(1.1);
+}
+
+#sendButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+#sendButton:hover {
+  transform: scale(1.1);
+}
+
+/* Popup Menu */
+#popupMenu {
+  background-color: rgb(154, 154, 154);
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  z-index: 10;
+}
+#popupMenu.hidden {
+  display: none;
+}
+.popupOption {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.popupOption:hover {
+  background-color: var(--hover-light);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Log out */
+#logoutButton {
+  position: absolute;
+  right: 3rem;
+  top: 1.5rem;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.3em;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+#logoutButton:hover {
+  background-color: var(--hover-light);
+}

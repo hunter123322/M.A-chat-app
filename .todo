@@ -1,7 +1,24 @@
-use (-) to sign if its done 
-use (x) if pending task or not done yet
-use (u) undone things or can't finish the task
+// client.js
+socket.emit('getUserData', { userId: '123' }, (response) => {
+  console.log('Server responded:', response); // This is like the response (res)
+});
 
-- sign up routes
-- log in routes
-- simple socket.io server 
+
+// server.js
+io.on('connection', (socket) => {
+  socket.on('getUserData', (data, callback) => {
+    console.log('Request data:', data); // This is like the request (req)
+    
+    // Simulate fetching data and send it back
+    const userData = { id: data.userId, name: 'Alice' };
+    callback(userData); // This is like sending res
+  });
+});
+
+
+<!-- makng refesh funton to socket.io -->
+
+<!-- next todo -->
+
+//======================//
+we need to syncrounos the message

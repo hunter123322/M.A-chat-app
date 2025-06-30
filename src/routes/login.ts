@@ -1,98 +1,65 @@
 import { Request, Response } from "express";
-import passwordController from "../controller/passwordController";
-import validation from "../model/user";
-import mysqlConnect from "../controller/mySQLConnection";
+import passwordController from "../controller/passwordController.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import mysqlConnection from "../controller/mySQLConnection.js";
+import Message from "../model/messagesModel.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface UserAut {
+  user_id?: string;
   username: string;
   password: string;
 }
-interface UserInfo {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  age: number;
-}
-interface UserLocation {
-  country: string;
-  region: string;
-  district: string;
-  municipality: string;
-  barangay: string;
-  zone: string;
-  house_number: string;
+
+// login route
+async function getLogin(req: Request, res: Response): Promise<void> {
+  try {
+    res.sendFile(path.join(__dirname, "../../public/html/login-signup.html"));
+  } catch (error) {
+    res.status(500);
+  }
 }
 
-// login routes
-const login = async (req: Request, res: Response): Promise<void> => {
+async function postlogin(req: Request, res: Response): Promise<void> {
+  const sqlconnection = await mysqlConnection();
   try {
     const user: UserAut = req.body;
 
-    const comparePassword = await passwordController.compareIncryptedPassword(user.username, user.password);
-    if (comparePassword !== true) throw new Error();
+    const authentication: UserAut = await passwordController.compareIncryptedPassword(user.username, user.password);
 
-    (req.session as { username?: string }).username = user.username;
+    if (!authentication) {
+      throw new Error("Invalid Login!");
+    }
 
-    res.status(200);
+    (req.session as { user_id?: string }).user_id = authentication.user_id;
+
+    const sendedMessage = await Message.find({ senderID: authentication.user_id })
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    const receiveMessage = await Message.find({ receiverID: authentication.user_id })
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    const message: any = sendedMessage.concat(receiveMessage);
+    message.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    console.log(message);
+    
+
+    res.status(200)
+      .json({ message: "Login successful", user_id: authentication.user_id, messages: message });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// signup routes
-const signup = async (req: Request, res: Response): Promise<void> => {
-  const sqlconnection = await mysqlConnect();
-  const queryRunner = await sqlconnection.bigTransaction();
-
-  try {
-    const userInfo: UserInfo & UserAut & UserLocation = req.body;
-    if (!userInfo.middleName) userInfo.middleName = "";
-    validation.userValidation(userInfo.firstName, userInfo.lastName, userInfo.middleName, userInfo.age);
-    validation.locationValidation(
-      userInfo.country,
-      userInfo.region,
-      userInfo.district,
-      userInfo.municipality,
-      userInfo.barangay,
-      userInfo.zone,
-      userInfo.house_number
-    );
-
-    // initialize username and hashed password
-    const username: string = userInfo.username;
-    const hashedPassword: string = await passwordController.passwordHasher(userInfo.password);
-
-    // Prepare queries
-    const userInfoQuery: string = `INSERT INTO users (firstName, lastName, middleName, age) VALUES (?, ?, ?, ?)`;
-    await queryRunner.execute(userInfoQuery, [
-      userInfo.firstName,
-      userInfo.lastName,
-      userInfo.middleName,
-      userInfo.age,
-    ]);
-
-    const userAutQuery: string = `INSERT INTO login_info (username, password) VALUES (?, ?)`;
-    await queryRunner.execute(userAutQuery, [userInfo.username, hashedPassword]);
-
-    const locationQuery: string = `INSERT INTO location (country, region, district, municipality, barangay, zone, house_number) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    await queryRunner.execute(locationQuery, [
-      userInfo.country,
-      userInfo.region,
-      userInfo.district,
-      userInfo.municipality,
-      userInfo.barangay,
-      userInfo.zone,
-      userInfo.house_number,
-    ]);
-    await queryRunner.commitTransaction();
-
-    (req.session as { username?: string }).username = username;
-
-    res.status(201).json({ message: "Successfully sign up!" });
-  } catch (error: any) {
-    await queryRunner.rollbackTransaction();
-    res.status(500).json({ error: error.message });
+    await sqlconnection.rollback();
+    res.status(404).json({ error: error.message });
+    console.log(error)
   } finally {
-    await queryRunner.release();
+    sqlconnection.end();
   }
-};
+}
+
+
+export default { postlogin, getLogin };

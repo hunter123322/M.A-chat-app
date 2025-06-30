@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Landing Page</title>
+
+  <!-- Link to Google Fonts for styling -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Link to jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    /* Basic reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+    }
+
+    /* Header Styles */
+    header {
+      background: #333;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: url('https://via.placeholder.com/1200x600') no-repeat center center/cover;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .cta-button {
+      background-color: #ff5733;
+      color: white;
+      padding: 15px 30px;
+      text-decoration: none;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .cta-button:hover {
+      background-color: #c7451c;
+    }
+
+    /* Features Section */
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 50px 0;
+    }
+
+    .feature-box {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 20px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-box h3 {
+      margin-bottom: 20px;
+    }
+
+    .feature-box p {
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    footer p {
+      font-size: 1rem;
+    }
+
+    /* Form Section */
+    .form-container {
+      padding: 50px;
+      background-color: #fff;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .form-container input, .form-container button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .form-container button {
+      background-color: #ff5733;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #c7451c;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <h1>Welcome to Our Service</h1>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div>
+      <h2>Transform Your Business</h2>
+      <p>Get started with the best tools for your growth!</p>
+      <a href="#form" class="cta-button">Get Started</a>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features">
+    <div class="feature-box">
+      <h3>Feature 1</h3>
+      <p>Explanation of the first feature of the service.</p>
+    </div>
+    <div class="feature-box">
+      <h3>Feature 2</h3>
+      <p>Explanation of the second feature of the service.</p>
+    </div>
+    <div class="feature-box">
+      <h3>Feature 3</h3>
+      <p>Explanation of the third feature of the service.</p>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div id="form" class="form-container">
+    <h3>Sign Up Now</h3>
+    <form id="signup-form">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="email" id="email" placeholder="Your Email" required>
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>&copy; 2024 Our Service. All rights reserved.</p>
+  </footer>
+
+  <!-- jQuery Script -->
+  <script>
+    // jQuery for smooth scrolling when clicking the "Get Started" button
+    $(document).ready(function() {
+      $('a.cta-button').on('click', function(event) {
+        event.preventDefault();
+        $('html, body').animate({
+          scrollTop: $('#form').offset().top
+        }, 1000);
+      });
+
+      // jQuery for form validation
+      $('#signup-form').on('submit', function(event) {
+        event.preventDefault();
+        let name = $('#name').val();
+        let email = $('#email').val();
+
+        if (name === "" || email === "") {
+          alert("Please fill out all fields.");
+        } else {
+          alert("Thank you for signing up, " + name + "!");
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

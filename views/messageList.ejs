@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Message: <%= title %></title>
+    <link rel="stylesheet" href="../css/messageList.css" />
+    <script defer src="../js/messageListaction.js"></script>
+    <script defer type="module" src="../js/chatAction/action.js"></script>
+  </head>
+  <body>
+    <div id="nav">
+      <div id="profile">
+        <img
+          src="../img/person1.webp"
+          alt="Profile Picture"
+          id="profilePicture"
+        />
+        <button id="logoutButton">Log Out</button>
+        <h1 id="name"><%= fullName %></h1>
+        <p id="status"><%= status %></p>
+        <!-- Added logout button here -->
+        <input type="text" id="searchContact" placeholder="Search" />
+      </div>
+
+      <div id="contactList">
+        <% contactList.forEach(function(contact) { %>
+        <div id="<%= contact.id %>" class="contact-card">
+          <img
+            src="../img/person1.webp"
+            alt="Profile Picture"
+            class="profilePicture"
+          />
+          <p class="personName"><%= contact.name %></p>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div id="main">
+      <div id="contactProfile">
+        <img src="../img/person1.webp" id="contactProfilePicture" />
+        <h1 id="contactName"><%= fullName %></h1>
+        <p id="contactStatus"><%= status %></p>
+        <input type="text" id="searchContact" placeholder="Search Message" />
+      </div>
+      <div id="message">
+        <div id="messageBody">
+          <div id="content"></div>
+        </div>
+        <div id="input">
+          <div id="messagInputOption">···</div>
+
+          <!-- Popup Menu -->
+          <div id="popupMenu" class="hidden">
+            <button class="popupOption" data-type="png">PNG</button>
+            <button class="popupOption" data-type="file">File</button>
+            <button class="popupOption" data-type="video">Video</button>
+            <button class="popupOption" data-type="gif">GIF</button>
+          </div>
+
+          <input type="text" id="inputMessage" placeholder="Txt" />
+          <button type="submit" id="sendButton">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <!-- Add this script for logout functionality -->
+    <script>
+      document
+        .getElementById("logoutButton")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetch("/logout", {
+              method: "POST",
+              credentials: "include", // Required for session cookies
+            });
+
+            if (response.ok) {
+              window.location.href = "/login"; // Redirect to login page
+              localStorage.clear()
+            } else {
+              alert("Logout failed. Please try again.");
+            }
+          } catch (error) {
+            console.error("Logout error:", error);
+          }
+        });
+    </script>
+  </body>
+</html>

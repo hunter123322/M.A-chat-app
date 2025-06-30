@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landing Page Form</title>
+  <link rel="stylesheet" href="../css/userIndo.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Fill Out the Form</h1>
+    <form id="userForm">
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" name="firstName" required>
+      </div>
+
+      <div class="form-group">
+        <label for="middleName">Middle Name</label>
+        <input type="text" id="middleName" name="middleName">
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" name="lastName" required>
+      </div>
+
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" required min="1">
+      </div>
+
+      <button type="submit" id="submit-btn">Submit</button>
+    </form>
+    <div id="response" class="response"></div>
+  </div>
+
+  <script src="../js/userInfo.js"></script>
+</body>
+</html>
