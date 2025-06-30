@@ -14,7 +14,7 @@ This project is built not just to function as a chat app, but as a learning plat
 - Session handling with encryption and database persistence
 - Multi-database architecture (SQL + NoSQL)
 - Scalable deployment using Docker and Kubernetes -
-    |- [not yet implemented]
+    |- **[not yet implemented]**
 - Clean code structure (MVC pattern)
 - Git version control and development best practices
 
@@ -23,24 +23,23 @@ This project is built not just to function as a chat app, but as a learning plat
 ## 🚀 Features
 
 - 🔐 **security** – Register and login securely with session management
-    |- [express session]
-    |- [parameterized queries to lower the risk of injection]
-    |- [proper sanitization using helmet for XSS]
-    |- [rate limiting ]
-    |- [CORS ]
-    |-
+    **|- [express session]**
+    **|- [parameterized queries to lower the risk of injection]**
+    **|- [proper sanitization using helmet for XSS]**
+    **|- [rate limiting]**
+    **|- [CORS]**
 - 💬 **Private Messaging** – 1-on-1 direct chats between users
 - 👥 **Group Messaging** – Join or create chat groups (MVP)
-    |- [not yet implemented]
+    |- **[not yet implemented]**
 - 📥 **Message Storage** – Uses MongoDB for flexible message handling
 - 📄 **User Profiles** – SQL-based structured user and location information
 - 🚫 **Blocking System** – Users can block others to prevent unwanted messages 
-    |- [not yet implemented]
+    |- **[not yet implemented]**
 - 🕒 **Timestamps** – All messages and activities are time-tracked
 - 🧩 **Modular Codebase** – Follows an MVC-style structure for maintainability
     |- [refactor to OOP]
 - 🐳 **Dockerized** – Easily deployable using Docker containers
-    |- [not yet implemented]
+    |- **[not yet implemented]**
 - ☁️ **K8s Ready** – Built with container orchestration in mind
 
 ---
