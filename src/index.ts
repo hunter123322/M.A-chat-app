@@ -1,30 +1,28 @@
 import mongoose from "mongoose";
+import mongoDBconnection from "./controller/mongodbConnection.js"; // ✅ Don't forget `.js` in Bun
 
-// Assume Message model is already defined with timestamps
-const Message = mongoose.model("Message");
+await mongoDBconnection();
 
-// Function to get paginated messages
-async function getPaginatedMessages(lastTimestamp?: Date): Promise<any[]> {
-  const query: any = {};
+const messageSchema = new mongoose.Schema({
+  senderID: { type: String, required: true },
+  receiverID: { type: String, required: true },
+  conversationID: { type: String, required: true },
+  content: { type: String, trim: true, required: true },
+  react: { type: String, trim: true }
+}, { timestamps: true });
 
-  if (lastTimestamp) {
-    query.createdAt = { $lt: lastTimestamp }; // Only get older messages
-  }
+// ✅ Add collection name if you're unsure
+const Message = mongoose.model("Message", messageSchema, "messages");
 
-  const messages = await Message.find(query)
-    .sort({ createdAt: -1 }) // Newest to oldest
-    .limit(100);
+// ✅ Optional insert
+// await Message.create({
+//   senderID: "user1",
+//   receiverID: "user2",
+//   conversationID: "c1",
+//   content: "hey",
+//   react: "❤️"
+// });
 
-  return messages;
-}
-
-// Example usage:
-async function exampleUsage() {
-  const page1 = await getPaginatedMessages(); // First 100 newest
-
-  if (page1.length > 0) {
-    const lastTimestamp = page1[page1.length - 1].createdAt;
-    const page2 = await getPaginatedMessages(lastTimestamp); // Next 100
-    console.log("Page 2:", page2);
-  }
-}
+// ✅ Read
+const a = await Message.find({});
+console.log("📨 Messages:", a);

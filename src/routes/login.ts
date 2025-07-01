@@ -46,9 +46,10 @@ async function postlogin(req: Request, res: Response): Promise<void> {
 
     const message: any = sendedMessage.concat(receiveMessage);
     message.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const messages = await Message.find();
+    console.log(messages);
+    console.log(authentication);
 
-    console.log(message);
-    
 
     res.status(200)
       .json({ message: "Login successful", user_id: authentication.user_id, messages: message });
