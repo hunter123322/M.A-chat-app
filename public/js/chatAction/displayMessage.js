@@ -58,7 +58,7 @@ const menuItems = [
   { type: 'divider' },
   { icon: 'fa-smile', text: 'React', action: () => console.log('React clicked') },
   { type: 'divider' },
-  { icon: 'fa-trash', text: 'Delete', action: () => console.log('Delete clicked'), class: 'danger' }
+  { icon: 'fa-trash', text: 'Delete', action: () => console.log('Delete clicked'), class: 'danger' },
 ];
 
 function displayMessage(text, isMine) {
@@ -79,6 +79,8 @@ function displayMessage(text, isMine) {
   container.className = 'menu-container';
   messageDiv.appendChild(container);  // Attach to messageDiv
 
+  
+
   // Menu button
   const menuButton = document.createElement('div');
   menuButton.className = 'menu-button';
@@ -89,6 +91,21 @@ function displayMessage(text, isMine) {
   const popupMenu = document.createElement('div');
   popupMenu.className = 'popup-menu';
   container.appendChild(popupMenu);
+
+
+// Dynamically position the menu based on who sent the message
+if (isMine) {
+  container.style.right = '0.25rem';
+  container.style.left = 'auto';
+  popupMenu.style.left = '0';
+  popupMenu.style.left = 'auto';
+} else {
+  container.style.left = '0.25rem';
+  container.style.right = 'auto';
+  popupMenu.style.right = '0';
+  popupMenu.style.right = 'auto';
+}
+
 
   // Menu items
   menuItems.forEach(item => {

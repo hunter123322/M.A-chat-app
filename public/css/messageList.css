@@ -283,7 +283,8 @@ body {
 
 /* Message bubbles */
 .text, .myText {
-  position: relative; /* Needed for absolute menu positioning */
+  position: relative;
+  display: flex;
   padding: 0.75rem 1rem;
   border-radius: 10px;
   max-width: 75%;
@@ -320,6 +321,7 @@ body {
 
 /* Menu button */
 .menu-button {
+  position: absolute;
   background: none;
   border: none;
   font-size: 1.25rem;
@@ -351,7 +353,7 @@ body {
   visibility: hidden;
   display: flex;
   flex-direction: column;
-  background: var(--hover-light);
+  background: white;
   border: 1px solid var(--message-bg);
   transition: all var(--transition-speed) ease;
 }
