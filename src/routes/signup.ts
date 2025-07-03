@@ -1,16 +1,20 @@
 import express, { Request, Response } from "express";
 import passwordController from "../controller/passwordController.js";
-import mysqlConnect from "../controller/mySQLConnection.js";
+import mySQLConnectionPool from "../controller/mySQLConnectionPool.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import userSignupValidation from "../model/userSignupValidation.js";
 import { ResultSetHeader } from "mysql2";
 
+// refactor
+import { UserController } from "../controller/userController.js";
+
+
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const sqlconnection = await mysqlConnect();
+const SQLconnection = await mySQLConnectionPool.getConnection();
 
 interface UserAut {
   username: string;
@@ -38,6 +42,7 @@ app.use(express.static("public"));
 app.use(express.json()); // For parsing JSON payloads
 app.use(express.urlencoded({ extended: true })); // For form data
 
+// Handle get signUP
 async function getSingup(req: Request, res: Response): Promise<void> {
   try {
     res.sendFile(path.join(__dirname, "../../public/html/login-signup.html"));
@@ -46,6 +51,7 @@ async function getSingup(req: Request, res: Response): Promise<void> {
   }
 }
 
+// Handle get information
 async function getSingupInformation(req: Request, res: Response): Promise<void> {
   try {
     res.sendFile(path.join(__dirname, "../../public/html/userInfo.html"));
@@ -54,6 +60,7 @@ async function getSingupInformation(req: Request, res: Response): Promise<void> 
   }
 }
 
+// Handle get location
 async function getSingupLocation(req: Request, res: Response): Promise<void> {
   try {
     res.sendFile(path.join(__dirname, "../../public/html/userLocation.html"));
@@ -62,102 +69,50 @@ async function getSingupLocation(req: Request, res: Response): Promise<void> {
   }
 }
 
+// Handle post signup
 async function postSignup(req: Request, res: Response): Promise<void> {
+  const userController = new UserController(mySQLConnectionPool)
   try {
     const userAut: UserAut = req.body;
-
     if (!userAut) throw new Error();
 
-    await sqlconnection.beginTransaction();
-
-    const username: string = userAut.username;
-    const hashedPassword: string = await passwordController.passwordHasher(userAut.password);
-
-    const userAutQuery = `INSERT INTO login_info (username, password) VALUES (?, ?)`;
-    const [result] = await sqlconnection.execute<ResultSetHeader>(userAutQuery, [username, hashedPassword]);
-
-    await sqlconnection.commit();
-
-    const user_id = result.insertId;
+    const user_id = await userController.signController(userAut.username, userAut.password);
     (req.session as { user_id?: number }).user_id = user_id;
-
-    res.status(200).json({ message: "aceepted" });
+    res.status(200).json({ message: "aceepted", user_id: user_id });
   } catch (error: any) {
-    await sqlconnection.rollback();
     console.error("Error during signup:", error);
     res.status(500).json({ error: error.message });
   }
 }
 
+// Handle post information
 async function userInformation(req: Request, res: Response): Promise<void> {
+  const userController = new UserController(mySQLConnectionPool)
   try {
     const userInfo: UserInfo = req.body;
     userInfo.age = Number(userInfo.age)
-
-    userSignupValidation.userValidation(userInfo);
-
     if (!userInfo.middleName) userInfo.middleName = "";
-
     const user_id = (req.session as { user_id?: number }).user_id;
     if (!user_id) throw new Error("No user session");
-    console.log(user_id)
-
-    await sqlconnection.beginTransaction();
-
-    const userInfoQuery: string =
-      "INSERT INTO users (user_id, firstName, lastName, middleName, age) VALUES (?, ?, ?, ?, ?)";
-
-    const [result] = await sqlconnection.execute<ResultSetHeader>(userInfoQuery, [
-      user_id,
-      userInfo.firstName,
-      userInfo.lastName,
-      userInfo.middleName,
-      userInfo.age,
-    ]);
-
-    if ((result as ResultSetHeader).affectedRows === 0) {
-      throw new Error("Insert failed");
-    }
-
-    await sqlconnection.commit();
-
+    userController.userInformationController(userInfo, user_id)
     res.status(200).json({ message: "aceepted" });
   } catch (error: any) {
-    await sqlconnection.rollback()
     res.status(500).json({ message: "Server error please try again" });
     console.log(error);
 
   }
 }
 
+// Handle post location
 async function userLocation(req: Request, res: Response): Promise<void> {
+  const userController = new UserController(mySQLConnectionPool)
   try {
     const userLoc: UserLocation = req.body;
-    userSignupValidation.locationValidation(userLoc);
-
     const user_id = (req.session as { user_id?: number }).user_id;
     if (!user_id) throw new Error("No user session");
-
-    await sqlconnection.beginTransaction();
-
-    const locationQuery: string =
-      "INSERT INTO location (user_id, country, region, district, municipality, barangay, zone, house_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    const [result] = await sqlconnection.execute<ResultSetHeader>(locationQuery, [
-      user_id,
-      userLoc.country,
-      userLoc.region,
-      userLoc.district,
-      userLoc.municipality,
-      userLoc.barangay,
-      userLoc.zone,
-      userLoc.house_number,
-    ]);
-
-    await sqlconnection.commit();
-
+    userController.locationController(userLoc, user_id)
     res.status(200).json({ message: "Signup successful", redirectUrl: "/socket/v1" });
   } catch (error) {
-    await sqlconnection.rollback();
     res.status(500).json({ message: "Server error, please try again" });
   }
 }

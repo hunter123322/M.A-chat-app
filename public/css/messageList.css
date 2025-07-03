@@ -341,7 +341,7 @@ body {
 /* Popup menu */
 .popup-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  /* top: calc(100% + 0.5rem); */
   right: 0;
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);

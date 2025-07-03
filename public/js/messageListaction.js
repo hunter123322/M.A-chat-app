@@ -31,7 +31,7 @@ const socket = io("http://localhost:3000", {
 });
 
 // Event Listeners
-sendButton?.addEventListener("click", sendMessage);
+// sendButton?.addEventListener("click", sendMessage);
 
 inputMessage?.addEventListener("keydown", (e) => {
   if (e.key === "Enter") sendMessage();
@@ -56,13 +56,15 @@ contactList?.addEventListener("click", (event) => {
   conversationID = existingConversations[0] || generateConversationID(userID, receiverID);
 
   socket.emit("joinConversation", conversationID);
-  loadConversationHistory();
+  // loadConversationHistory();
 });
 
 // Handle incoming messages
-socket.on("chatMessage", (data) => {
+socket.on("recieveMessage", (data) => {
   if (!isValidMessage(data) || data.conversationID !== conversationID) return;
   processIncomingMessage(data);
+  console.log("recieveMessage");
+  
 });
 
 function sendMessage() {
@@ -99,7 +101,6 @@ function processIncomingMessage(data) {
     messageSave.save(messages);
   }
 
-  if (!isMine) scrollToBottom();
 }
 
 function validateSendConditions(text) {
@@ -121,7 +122,6 @@ function displayOptimisticMessage(messageData) {
   displayMessage(messageData.content, true);
   messages.push(messageData);
   messageSave.save(messages);
-  scrollToBottom();
 }
 
 function sendToServer(messageData) {
@@ -130,19 +130,6 @@ function sendToServer(messageData) {
 
 function resetInput() {
   inputMessage.value = "";
-}
-
-function scrollToBottom() {
-  messageContainer.scrollTop = messageContainer.scrollHeight;
-}
-
-function loadConversationHistory() {
-  messageContainer.innerHTML = "";
-
-  const history = messages.filter(m => m.conversationID === conversationID);
-  history.forEach(msg => displayMessage(msg.content, msg.senderID === userID));
-
-  scrollToBottom();
 }
 
 function displayMessage(text, isMine) {

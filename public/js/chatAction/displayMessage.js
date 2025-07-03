@@ -31,7 +31,7 @@ export default function initMessage (event) {
   
   filteredMessage.reverse().forEach((message) => {
     const bool = userID == message.senderID;
-    displayMessage(message.content, bool);
+    displayMessage(message.content, bool, message._id);
   });
 };
 
@@ -47,9 +47,6 @@ document.querySelectorAll(".contact-card").forEach((card) => {
     card.style.boxShadow = "none";
   });
 });
-
-
-
 // -- //
 
 const menuItems = [
@@ -61,9 +58,10 @@ const menuItems = [
   { icon: 'fa-trash', text: 'Delete', action: () => console.log('Delete clicked'), class: 'danger' },
 ];
 
-function displayMessage(text, isMine) {
+function displayMessage(text, isMine, messageId) {
   const messageContainer = document.createElement("div");
   messageContainer.classList.add(isMine ? "myText" : "text");
+  messageContainer.id = ""
 
   const messageDiv = document.createElement("div");
   messageDiv.className = "message-content";
@@ -95,15 +93,16 @@ function displayMessage(text, isMine) {
 
 // Dynamically position the menu based on who sent the message
 if (isMine) {
-  container.style.right = '0.25rem';
+  container.style.right = '0.05rem';
+  container.style.top = '0.05rem';
   container.style.left = 'auto';
-  popupMenu.style.left = '0';
-  popupMenu.style.left = 'auto';
+  popupMenu.style.left = '-15rem';
+  popupMenu.style.top = '-8.5rem';
 } else {
   container.style.left = '0.25rem';
   container.style.right = 'auto';
-  popupMenu.style.right = '0';
-  popupMenu.style.right = 'auto';
+  popupMenu.style.right = '-15rem';
+  popupMenu.style.top = '-8.5rem';
 }
 
 

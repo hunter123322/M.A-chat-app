@@ -6,7 +6,8 @@ const message = new Schema(
         senderID: { type: String, required: true },
         receiverID: { type: String, required: true },
         conversationID: { type: String, required: true },
-        content: {
+        content: { type: String, required: true },
+        contentType: {
             type: String,
             enum: ['text', 'image', 'video', 'file', 'audio'],
             default: 'text'
@@ -18,7 +19,7 @@ const message = new Schema(
         status: {
             type: String,
             enum: ['sent', 'sending', 'delivered', 'seen', 'invalid'],
-            default: 'sending'
+            default: 'sent'
         },
     }, { timestamps: true }
 );

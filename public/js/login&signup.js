@@ -114,7 +114,7 @@ async function handleSignUpSubmit(event) {
 
   try {
     const response = await submitForm(data);
-    localStorage.setItem("userData", JSON.stringify(response.username));
+    localStorage.setItem("user_id", JSON.stringify(response.user_id));
     handleResponse(response);
     console.log(response.status);
   } catch (error) {

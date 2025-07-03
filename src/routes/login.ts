@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import passwordController from "../controller/passwordController.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import mysqlConnection from "../controller/mySQLConnection.js";
+import mySQLConnectionPool from "../controller/mySQLConnectionPool.js";
 import Message from "../model/messagesModel.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,11 +24,11 @@ async function getLogin(req: Request, res: Response): Promise<void> {
 }
 
 async function postlogin(req: Request, res: Response): Promise<void> {
-  const sqlconnection = await mysqlConnection();
+  const sqlconnection = await mySQLConnectionPool.getConnection();
   try {
     const user: UserAut = req.body;
 
-    const authentication: UserAut = await passwordController.compareIncryptedPassword(user.username, user.password);
+    const authentication: UserAut = await passwordController.compareEncryptedPassword(user.username, user.password);
 
     if (!authentication) {
       throw new Error("Invalid Login!");

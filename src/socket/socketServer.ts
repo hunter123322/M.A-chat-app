@@ -48,18 +48,9 @@ async function handleSocketConnection(io: Server) {
       }
 
       console.log("Received message:", msg);
-/**
- * 
- *
- // Event Listeners
-sendButton.addEventListener("click", sendMessage);
-inputMessage.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
-});
- * 
- * */ 
+
       // Save to MongoDB (uncomment when ready)
-    await postMessage(
+      const saveMessage: messageDataType = await postMessage(
         msg.content,
         msg.senderID,
         msg.receiverID,
@@ -67,10 +58,7 @@ inputMessage.addEventListener("keydown", (e) => {
       );
 
       // Send only to participants in this conversation
-      io.to(msg.conversationID).emit("chatMessage", {
-        ...msg,
-        createdAt: new Date() // Add server-side timestamp
-      });
+      io.to(msg.conversationID).emit("recieveMessage", saveMessage);
     });
 
     socket.on("disconnect", () => {
@@ -102,7 +90,7 @@ async function getMessage(convoID: String, lastTimestamp: any): Promise<any[]> {
   }
 }
 
-async function postMessage(content: String, sender: String, reciever: String, conversationId?: String): Promise<void> {
+async function postMessage(content: String, sender: String, reciever: String, conversationId?: String): Promise<messageDataType> {
   try {
     if (!conversationId) {
       const lastconversationID = randomUUID();
@@ -116,9 +104,9 @@ async function postMessage(content: String, sender: String, reciever: String, co
       content: content
     });
 
-    const saveMessage = await newMessage.save();
+    const saveMessage: messageDataType = await newMessage.save();
     if (!saveMessage) throw new Error("Failed to send!");
-
+    return saveMessage;
   } catch (error: any) {
     throw new Error("Post message Error!" + error.message);
   }
