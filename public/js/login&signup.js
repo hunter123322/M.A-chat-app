@@ -114,7 +114,7 @@ async function handleSignUpSubmit(event) {
 
   try {
     const response = await submitForm(data);
-    localStorage.setItem("user_id", JSON.stringify(response.user_id));
+    localStorage.setItem("user_id", response.user_id);
     handleResponse(response);
     console.log(response.status);
   } catch (error) {
@@ -146,6 +146,7 @@ document.getElementById("login")?.addEventListener("submit", async (event) => {
       if (data.user_id) {
         localStorage.setItem("user_id", data.user_id);
         localStorage.setItem("messageData", JSON.stringify(data.messages));
+        localStorage.setItem("userInfo", JSON.stringify(data.userInfo));
       }
       window.location.href = `/socket/v1?user=${data.user_id}`;
     } else {

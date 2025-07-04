@@ -44,7 +44,7 @@ export class UserTransaction {
     ): Promise<number> {
         return this.withTransaction(async (conn) => {
             const [result] = await conn.execute<ResultSetHeader>(
-                `INSERT INTO login_info (username, password) VALUES (?, ?)`,
+                `INSERT INTO users_auth (username, password) VALUES (?, ?)`,
                 [username, hashedPassword]
             );
             return result.insertId;
@@ -57,7 +57,7 @@ export class UserTransaction {
     ): Promise<void> {
         return this.withTransaction(async (conn) => {
             const [result] = await conn.execute<ResultSetHeader>(
-                `INSERT INTO users (user_id, firstName, lastName, middleName, age) 
+                `INSERT INTO users_info (user_id, firstName, lastName, middleName, age) 
                 VALUES (?, ?, ?, ?, ?)`,
                 [userId, data.firstName, data.lastName, data.middleName, data.age]
             );
@@ -74,7 +74,7 @@ export class UserTransaction {
     ): Promise<void> {
         return this.withTransaction(async (conn) => {
             await conn.execute<ResultSetHeader>(
-                `INSERT INTO location 
+                `INSERT INTO users_location 
                 (user_id, country, region, district, municipality, barangay, zone, house_number) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                 [

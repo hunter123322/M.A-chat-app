@@ -17,6 +17,7 @@ document.getElementById("userForm").addEventListener("submit", async function (e
     try {
         await sendUserInformationRequest(userInfo);
         showResponse(`Thank you, ${firstName} ${middleName ? middleName + " " : ""}${lastName}!`, "success");
+        localStorage.setItem("userInfo", userInfo)
     }
     catch (error) {
         console.error(error);
@@ -48,6 +49,7 @@ async function sendUserInformationRequest(userInfo) {
         }
         else {
             window.location.href = "/signup/location";
+            
         }
     }
     catch (error) {
@@ -60,4 +62,3 @@ async function sendUserInformationRequest(userInfo) {
         }
     }
 }
-//# sourceMappingURL=userInfo.js.map

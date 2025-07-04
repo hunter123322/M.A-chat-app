@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import mySQLConnectionPool from "./mySQLConnectionPool.js";
 import { RowDataPacket } from 'mysql2/promise';
+import { UserModel } from "../model/userModel.js";
 
 
 const saltRound = 5;
@@ -9,6 +10,14 @@ interface UserAut {
   user_id: number;
   username: string;
   password: string;
+}
+
+interface Init extends UserAut {
+  user_id: number,
+  firstName: string,
+  lastName: string,
+  middleName: string,
+  age: number,
 }
 
 async function passwordHasher(password: string): Promise<string> {
@@ -20,11 +29,12 @@ async function passwordHasher(password: string): Promise<string> {
   }
 }
 
-async function compareEncryptedPassword(username: string, password: string): Promise<UserAut> {
+async function compareEncryptedPassword(username: string, password: string) {
   const connection = await mySQLConnectionPool.getConnection();
+  const initUserInfo = new UserModel(mySQLConnectionPool)
   try {
     const [rows] = await connection.query<RowDataPacket[]>(
-      "SELECT * FROM login_info WHERE username = ?",
+      "SELECT * FROM users_auth WHERE username = ?",
       [username]
     );
 
@@ -39,7 +49,11 @@ async function compareEncryptedPassword(username: string, password: string): Pro
       throw new Error("Incorrect password!");
     }
 
-    return user;
+    const userInfo = await initUserInfo.initUserInfo(user.user_id)
+
+    const returnValue = {...user, ...userInfo}
+
+    return returnValue;
   } catch (error) {
     await connection.rollback();
     throw error;

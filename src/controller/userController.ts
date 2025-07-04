@@ -4,7 +4,7 @@ import mySQLConnectionPool from "../controller/mySQLConnectionPool";
 import userSignupValidation from "../model/userSignupValidation";
 import { UserModel } from "../model/userModel";
 
-const user = new UserModel;
+const user = new UserModel(mySQLConnectionPool);
 
 type SQLConn = typeof mySQLConnectionPool;
 
@@ -30,6 +30,30 @@ interface UserAut {
   username: string;
   password: string;
 }
+
+interface UserMessages {
+  user_id: number;
+  messages: Object[];
+  authentication?: undefined;
+}
+
+interface UserAuthentication {
+  authentication: {
+    user_id: number;
+    username: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    middleName: string;
+    age: number;
+  };
+  messages?: undefined;
+}
+
+type UserData = UserMessages | UserAuthentication;
+
+// The complete response type would be:
+type ApiResponse = UserData[];
 
 export class UserController {
   private transaction: UserTransaction;
@@ -58,18 +82,16 @@ export class UserController {
   }
 
   public async loginController(data: UserAut) {
-    const authentication: UserAut = await passwordController.compareEncryptedPassword(data.username, data.password);
+    const authentication = await passwordController.compareEncryptedPassword(data.username, data.password);
     if (!authentication) {
       throw new Error("Invalid Login!");
     }
     const initMessage = await user.initMessage(authentication.user_id);
-
-    return {
+    
+    return [{
       user_id: authentication.user_id,
       messages: initMessage ?? [],
-    };
-
-
+    }, { authentication }];
   }
 }
 

@@ -45,7 +45,7 @@ app.use(router);
 // Routes
 app.get("/socket/v1", isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const id: any = req.query.user;
+    const id = (req.session as { user_id?: number }).user_id;
     const dataToBeRender: any[] = [];
 
     const sendedMessage = await Message.find({ senderID: id })
@@ -61,9 +61,8 @@ app.get("/socket/v1", isAuthenticated, async (req: Request, res: Response) => {
 
     const data: any = {
       title: "person1",
-      fullName: "aldrin belardo",
-      status: "active",
-      messageList: dataToBeRender,
+      fullName: "Unknown User",
+      status: "Unknown",
       contactList: [
         { id: "14", name: "Alice", img: "person1.webp" },
         { id: "3", name: "new", img: "person2.webp" },
