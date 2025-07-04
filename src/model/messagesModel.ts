@@ -1,48 +1,87 @@
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+import mongoose, { Schema, Document, Model } from "mongoose";
 
-const message = new Schema(
-    {
-        senderID: { type: String, required: true },
-        receiverID: { type: String, required: true },
-        conversationID: { type: String, required: true },
-        content: { type: String, required: true },
-        contentType: {
-            type: String,
-            enum: ['text', 'image', 'video', 'file', 'audio'],
-            default: 'text'
-        },
-        react: [{
-            userID: { type: String, required: true },
-            emoji: { type: String }
-        }],
-        status: {
-            type: String,
-            enum: ['sent', 'sending', 'delivered', 'seen', 'invalid'],
-            default: 'sent'
-        },
-    }, { timestamps: true }
+// 🔹 Interface for a single reaction
+interface IReaction {
+  userID: string;
+  emoji?: string;
+}
+
+// 🔹 Status and Content types for better type safety
+type MessageStatus = "sent" | "sending" | "delivered" | "seen" | "invalid";
+type ContentType = "text" | "image" | "video" | "file" | "audio";
+
+// 🔹 Main message interface
+export interface IMessage {
+  senderID: string;
+  receiverID: string;
+  conversationID: string;
+  content: string;
+  contentType: ContentType;
+  status: MessageStatus;
+  reactions: IReaction[];  // Changed from 'react' to more descriptive 'reactions'
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// 🔹 Document type
+export interface IMessageDocument extends IMessage, Document {}
+
+// 🔹 Message schema
+const reactionSchema = new Schema<IReaction>({
+  userID: { type: String, required: true },
+  emoji: { type: String }
+}, { _id: false });  // No need for _id in subdocuments
+
+const messageSchema = new Schema<IMessageDocument>(
+  {
+    senderID: { type: String, required: true },
+    receiverID: { type: String, required: true },
+    conversationID: { type: String, required: true },
+    content: { type: String, required: true },
+    contentType: {
+      type: String,
+      enum: ["text", "image", "video", "file", "audio"],
+      default: "text",
+    },
+    reactions: [reactionSchema],  // Using the defined reactionSchema
+    status: {
+      type: String,
+      enum: ["sent", "sending", "delivered", "seen", "invalid"],
+      default: "sent",
+    },
+  },
+  { 
+    timestamps: true,
+    collection: "messages"  // Explicit collection name
+  }
 );
 
-const groupMessage = new Schema({
+// 🔹 Group message schema (optional - not exported or used yet)
+const groupMessageSchema = new Schema<IMessageDocument>(
+  {
     senderID: { type: String, required: true },
     conversationID: { type: String, required: true },
-    content: {
-        type: String,
-        enum: ['text', 'image', 'video', 'file', 'audio'],
-        default: 'text'
+    content: { type: String, required: true },
+    contentType: {
+      type: String,
+      enum: ["text", "image", "video", "file", "audio"],
+      default: "text",
     },
-    react: [{
-        userID: { type: String, required: true },
-        emoji: { type: String }
-    }],
+    reactions: [reactionSchema],  // Consistent naming
     status: {
-        type: String,
-        enum: ['sent', 'sending', 'delivered', 'seen', 'invalid'],
-        default: 'sending'
+      type: String,
+      enum: ["sent", "sending", "delivered", "seen", "invalid"],
+      default: "sending",
     },
-}, { timestamps: true })
-const Message = mongoose.model("Messages", message);
+  },
+  { 
+    timestamps: true,
+    collection: "group_messages"  // Explicit collection name
+  }
+);
 
+// 🔹 Create the model with proper typing
+const Message: Model<IMessageDocument> = mongoose.models.Message || 
+  mongoose.model<IMessageDocument>("Message", messageSchema);
 
 export default Message;

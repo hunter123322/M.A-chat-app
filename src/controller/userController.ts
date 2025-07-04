@@ -2,6 +2,9 @@ import { UserTransaction } from "../service/userService";
 import passwordController from "./passwordController";
 import mySQLConnectionPool from "../controller/mySQLConnectionPool";
 import userSignupValidation from "../model/userSignupValidation";
+import { UserModel } from "../model/userModel";
+
+const user = new UserModel;
 
 type SQLConn = typeof mySQLConnectionPool;
 
@@ -20,6 +23,12 @@ interface UserLocation {
   barangay: string;
   zone: string;
   house_number: string;
+}
+
+interface UserAut {
+  user_id: number;
+  username: string;
+  password: string;
 }
 
 export class UserController {
@@ -47,4 +56,20 @@ export class UserController {
     }
     await this.transaction.locationCredential(data, user_id);
   }
+
+  public async loginController(data: UserAut) {
+    const authentication: UserAut = await passwordController.compareEncryptedPassword(data.username, data.password);
+    if (!authentication) {
+      throw new Error("Invalid Login!");
+    }
+    const initMessage = await user.initMessage(authentication.user_id);
+
+    return {
+      user_id: authentication.user_id,
+      messages: initMessage ?? [],
+    };
+
+
+  }
 }
+

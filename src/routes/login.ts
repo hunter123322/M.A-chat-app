@@ -4,12 +4,15 @@ import path from "path";
 import { fileURLToPath } from "url";
 import mySQLConnectionPool from "../controller/mySQLConnectionPool.js";
 import Message from "../model/messagesModel.js";
+import { UserController } from "../controller/userController.js";
+
+const User = new UserController(mySQLConnectionPool);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 interface UserAut {
-  user_id?: string;
+  user_id: number;
   username: string;
   password: string;
 }
@@ -26,39 +29,14 @@ async function getLogin(req: Request, res: Response): Promise<void> {
 async function postlogin(req: Request, res: Response): Promise<void> {
   const sqlconnection = await mySQLConnectionPool.getConnection();
   try {
-    const user: UserAut = req.body;
-
-    const authentication: UserAut = await passwordController.compareEncryptedPassword(user.username, user.password);
-
-    if (!authentication) {
-      throw new Error("Invalid Login!");
-    }
-
-    (req.session as { user_id?: string }).user_id = authentication.user_id;
-
-    const sendedMessage = await Message.find({ senderID: authentication.user_id })
-      .sort({ createdAt: -1 })
-      .limit(20);
-
-    const receiveMessage = await Message.find({ receiverID: authentication.user_id })
-      .sort({ createdAt: -1 })
-      .limit(20);
-
-    const message: any = sendedMessage.concat(receiveMessage);
-    message.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    const messages = await Message.find();
-    console.log(messages);
-    console.log(authentication);
-
-
+    const userData: UserAut = req.body;
+    const data = await User.loginController(userData);
+    (req.session as { user_id?: number }).user_id = data.user_id;
     res.status(200)
-      .json({ message: "Login successful", user_id: authentication.user_id, messages: message });
+      .json({ message: "Login successful", user_id: data.user_id, messages: data.messages });
   } catch (error: any) {
-    await sqlconnection.rollback();
     res.status(404).json({ error: error.message });
     console.log(error)
-  } finally {
-    sqlconnection.end();
   }
 }
 
