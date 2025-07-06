@@ -1,20 +1,28 @@
 import express from "express";
-import signup from "./signup.js";
-import login from "./login.js";
-import isAuthenticated from "../controller/authentication.js";
-import logout from "./logout.js";
+import { getLogin, postLogin } from "../controller/auth/login.js";
+import isAuthenticated from "../middleware/authentication.js";
+import { logout } from "../controller/auth/logout.js";
+import { getInformation, postInformation } from "../controller/signup/step2/information.js";
+import { getLocation, postLocation } from "../controller/signup/step3/location.js";
+import { getSingup, postSignup } from "../controller/signup/step1/signup.js";
 const router = express.Router();
 
-router.get("/signup", signup.getSingup);
-router.get("/signup/information", isAuthenticated, signup.getSingupInformation);
-router.get("/signup/location", isAuthenticated, signup.getSingupLocation);
-router.get("/login", login.getLogin);
+// TODO - Add route for "/home" or "/M.A-Chat-App"
 
-router.post("/signup", signup.postSignup);
-router.post("/signup/information", isAuthenticated, signup.userInformation);
-router.post("/signup/location", isAuthenticated, signup.userLocation);
-router.post("/login", login.postlogin);
+// Login/Logout
+router.get("/login", getLogin);
+router.post("/login", postLogin);
+router.post("/logout", isAuthenticated, logout);
 
-router.post("/logout", isAuthenticated, logout.logout)
+// Multi-Step Signup
+router.get("/signup", getSingup);
+router.post("/signup", postSignup);
+
+router.get("/signup/information", isAuthenticated, getInformation);
+router.post("/signup/information", isAuthenticated, postInformation);
+
+router.get("/signup/location", isAuthenticated, getLocation);
+router.post("/signup/location", isAuthenticated, postLocation);
+
 
 export default router;

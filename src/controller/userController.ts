@@ -1,8 +1,9 @@
-import { UserTransaction } from "../service/userService";
-import passwordController from "./passwordController";
-import mySQLConnectionPool from "../controller/mySQLConnectionPool";
-import userSignupValidation from "../model/userSignupValidation";
-import { UserModel } from "../model/userModel";
+import { UserTransaction } from "../service/user/user.service";
+import passwordController from "../service/auth/passwordService";
+import mySQLConnectionPool from "../db/mysql/mySQLConnectionPool";
+import userSignupValidation from "../validation/userSignupValidation";
+import { UserModel } from "../model/user/user.model";
+import { IMessageDocument } from "../model/messagesModel";
 
 const user = new UserModel(mySQLConnectionPool);
 
@@ -31,29 +32,13 @@ interface UserAut {
   password: string;
 }
 
-interface UserMessages {
+type UserAuthFull = UserAut & UserInfo;
+
+type ApiResponse = {
   user_id: number;
-  messages: Object[];
-  authentication?: undefined;
+  messages: IMessageDocument[];
+  authentication: UserAuthFull;
 }
-
-interface UserAuthentication {
-  authentication: {
-    user_id: number;
-    username: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    middleName: string;
-    age: number;
-  };
-  messages?: undefined;
-}
-
-type UserData = UserMessages | UserAuthentication;
-
-// The complete response type would be:
-type ApiResponse = UserData[];
 
 export class UserController {
   private transaction: UserTransaction;
@@ -69,29 +54,31 @@ export class UserController {
 
   public async userInformationController(data: UserInfo, user_id: number | undefined): Promise<void> {
     if (!userSignupValidation.userValidation(data)) {
-      throw new Error("User information is invalid!");
+      throw new Error();
     }
     await this.transaction.informationCredential(data, user_id);
   }
 
   public async locationController(data: UserLocation, user_id: number | undefined): Promise<void> {
     if (!userSignupValidation.locationValidation(data)) {
-      throw new Error("User location is invalid!");
+      throw new Error();
     }
     await this.transaction.locationCredential(data, user_id);
   }
 
-  public async loginController(data: UserAut) {
+  public async loginController(data: UserAut): Promise<ApiResponse> {
     const authentication = await passwordController.compareEncryptedPassword(data.username, data.password);
     if (!authentication) {
       throw new Error("Invalid Login!");
     }
     const initMessage = await user.initMessage(authentication.user_id);
-    
-    return [{
+    return {
       user_id: authentication.user_id,
-      messages: initMessage ?? [],
-    }, { authentication }];
+      messages: initMessage,
+      authentication,
+    };
+
   }
+
 }
 

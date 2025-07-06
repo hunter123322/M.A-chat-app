@@ -20,9 +20,7 @@ interface UserLocation {
 export class UserTransaction {
     constructor(private pool: Pool) { }
 
-    private async withTransaction<T>(
-        operation: (conn: PoolConnection) => Promise<T>
-    ): Promise<T> {
+    private async withTransaction<T>(operation: (conn: PoolConnection) => Promise<T>): Promise<T> {
         const conn = await this.pool.getConnection();
 
         try {

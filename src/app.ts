@@ -7,13 +7,13 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 // Local imports (ESM-aware)
-import middlewareSession from "./controller/session.js";
-import mongoDBconnection from "./controller/mongodbConnection.js";
+import middlewareSession from "./middleware/session.js";
+import mongoDBconnection from "./db/mongodb/mongodbConnection.js";
 import router from "./routes/router.js";
 import handleSocketConnection from "./socket/socketServer.js";
 import { setSecurityHeaders } from "./middleware/securityHeaders.js";
 import Message from "./model/messagesModel.js";
-import isAuthenticated from "./controller/authentication.js";
+import isAuthenticated from "./middleware/authentication.js";
 
 dotenv.config();
 

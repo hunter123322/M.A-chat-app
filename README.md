@@ -74,6 +74,63 @@ This project is built not just to function as a chat app, but as a learning plat
 ![App Screenshot](https://github.com/hunter123322/typescript-try/blob/handling-offline-send-message/screenshot/Screenshot%202024-12-05%20135831.png)
 ![App Screenshot](https://github.com/hunter123322/typescript-try/blob/handling-offline-send-message/screenshot/Screenshot%202024-12-05%20135901.png)
 
+---
+
 - **Flowchart**
 
 ![App Screenshot](https://github.com/hunter123322/typescript-try/blob/handling-offline-send-message/screenshot/Screenshot%202025-06-23%20164322.png)
+
+
+- **Refactor the root file** 
+----src/
+    ├── app.ts                      # Express app configuration
+    |
+    ├── socket/                     # WebSocket server
+    │   └── socketServer.ts         # Socket.io/Socket logic
+    |
+    ├── controllers/                # HTTP handlers
+    │   ├── auth/
+    │   │   ├── login.ts
+    │   │   └── logout.ts
+    |   |   
+    │   ├── signup/
+    │   │   ├── step1/
+    |   |   |   └── signup.ts
+    |   |   ├── step2/
+    |   |   |   └── information.ts
+    |   |   └── step3/
+    |   |       └── location.ts
+    |   |
+    │   └── message/
+    │       └── messageController.ts
+    |
+    ├── models/                     # Data definitions
+    │   ├── user/
+    |   |   ├── user.model.ts
+    |   |   ├── user.mongo.model.ts
+    |   |   └── user.sql.model.ts
+    |   |
+    │   └── messagesModel.ts
+    |
+    ├── services/                   # Business logic
+    │   ├── auth/
+    │   │   └── passwordService.ts
+    |   |
+    │   └── user/
+    │       └── user.service.ts
+    |
+    ├── views/                      # Templates
+    │   └── message.ejs
+    |
+    ├── middleware/
+    │   ├── securityHeaders.ts
+    |   ├── securityHeaders.ts
+    |   └── session.ts
+    |
+    ├── db/                         # Database
+    │   ├── mongodbConnections.ts
+    │   └── mySQLConnectionPool.ts
+    |
+    └── routes/                     # Route definitions
+        └── router.ts
+        

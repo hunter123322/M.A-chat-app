@@ -1,9 +1,3 @@
-import mongoose from "mongoose";
-
-interface UserAut {
-  username: string;
-  password: string;
-}
 interface UserInfo {
   firstName: string;
   lastName: string;

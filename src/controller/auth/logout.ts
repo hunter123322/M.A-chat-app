@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 
-async function logout(req: Request, res: Response): Promise<void> {
+export async function logout(req: Request, res: Response): Promise<void> {
     try {
         req.session.destroy((err) => {
             if (err) {
@@ -20,5 +20,3 @@ async function logout(req: Request, res: Response): Promise<void> {
 
     }
 }
-
-export default { logout };

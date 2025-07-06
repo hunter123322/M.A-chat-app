@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import mySQLConnectionPool from "../controller/mySQLConnectionPool.js";
-import { UserController } from "../controller/userController.js";
+import mySQLConnectionPool from "../../db/mysql/mySQLConnectionPool.js";
+import { UserController } from "../userController.js";
+
 
 const User = new UserController(mySQLConnectionPool);
 
@@ -22,7 +23,7 @@ interface UserAut {
  */
 async function getLogin(req: Request, res: Response): Promise<void> {
   try {
-    res.sendFile(path.join(__dirname, "../../public/html/login-signup.html"));
+    res.sendFile(path.join(__dirname, "../../../public/html/login-signup.html"));
   } catch (error) {
     res.status(500);
   }
@@ -49,15 +50,15 @@ async function getLogin(req: Request, res: Response): Promise<void> {
  *   }
  * ]
  */
-async function postlogin(req: Request, res: Response): Promise<void> {
+async function postLogin(req: Request, res: Response): Promise<void> {
   const sqlconnection = await mySQLConnectionPool.getConnection();
   try {
     const userData: UserAut = req.body;
     const data = await User.loginController(userData);
-    
-    (req.session as { user_id?: number }).user_id = data[0].user_id;
+
+    (req.session as { user_id?: number }).user_id = data.user_id;
     res.status(200)
-      .json({ message: "Login successful", user_id: data[0].user_id, messages: data[0].messages, userInfo: data[1].authentication });
+      .json({ message: "Login successful", user_id: data.user_id, messages: data.messages, userInfo: data.authentication });
   } catch (error: any) {
     res.status(404).json({ error: error.message });
     console.log(error)
@@ -65,4 +66,4 @@ async function postlogin(req: Request, res: Response): Promise<void> {
 }
 
 
-export default { postlogin, getLogin };
+export { postLogin, getLogin };
