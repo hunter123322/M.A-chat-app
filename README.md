@@ -82,55 +82,58 @@ This project is built not just to function as a chat app, but as a learning plat
 
 
 - **Refactor the root file** 
-----src/
-    ├── app.ts                      # Express app configuration
-    |
-    ├── socket/                     # WebSocket server
-    │   └── socketServer.ts         # Socket.io/Socket logic
-    |
-    ├── controllers/                # HTTP handlers
-    │   ├── auth/
-    │   │   ├── login.ts
-    │   │   └── logout.ts
-    |   |   
-    │   ├── signup/
-    │   │   ├── step1/
-    |   |   |   └── signup.ts
-    |   |   ├── step2/
-    |   |   |   └── information.ts
-    |   |   └── step3/
-    |   |       └── location.ts
-    |   |
-    │   └── message/
-    │       └── messageController.ts
-    |
-    ├── models/                     # Data definitions
-    │   ├── user/
-    |   |   ├── user.model.ts
-    |   |   ├── user.mongo.model.ts
-    |   |   └── user.sql.model.ts
-    |   |
-    │   └── messagesModel.ts
-    |
-    ├── services/                   # Business logic
-    │   ├── auth/
-    │   │   └── passwordService.ts
-    |   |
-    │   └── user/
-    │       └── user.service.ts
-    |
-    ├── views/                      # Templates
-    │   └── message.ejs
-    |
-    ├── middleware/
-    │   ├── securityHeaders.ts
-    |   ├── securityHeaders.ts
-    |   └── session.ts
-    |
-    ├── db/                         # Database
-    │   ├── mongodbConnections.ts
-    │   └── mySQLConnectionPool.ts
-    |
-    └── routes/                     # Route definitions
-        └── router.ts
+-    src/
+-    ├── app.ts                      # Express app configuration
+-    |
+-    ├── socket/                     # WebSocket server
+-    │   └── socketServer.ts         # Socket.io/Socket logic
+-    |
+-    ├── controllers/                # HTTP handlers
+-    │   ├── auth/
+-    │   │   ├── login.ts
+-    │   │   └── logout.ts
+-    |   |   
+-    │   ├── signup/
+-    │   │   ├── step1/
+-    |   |   |   └── signup.ts
+-    |   |   ├── step2/
+-    |   |   |   └── information.ts
+-    |   |   └── step3/
+-    |   |       └── location.ts
+-    |   |
+-    │   └── message/
+-    │       └── messageController.ts
+-    |
+-    ├── models/                     # Data definitions
+-    │   ├── user/
+-    |   |   ├── user.model.ts
+-    |   |   ├── user.mongo.model.ts
+-    |   |   └── user.sql.model.ts
+-    |   |
+-    │   └── messagesModel.ts
+-    |
+-    ├── services/                   # Business logic
+-    │   ├── auth/
+-    │   │   └── passwordService.ts
+-    |   |
+-    │   └── user/
+-    │       └── user.service.ts
+-    |
+-    ├── validation/
+-    |   └── user.signup.validation.ts
+-    |
+-    ├── views/                      # Templates
+-    │   └── message.ejs
+-    |
+-    ├── middleware/
+-    │   ├── securityHeaders.ts
+-    |   ├── securityHeaders.ts
+-    |   └── session.ts
+-    |
+-    ├── db/                         # Database
+-    │   ├── mongodbConnections.ts
+-    │   └── mySQLConnectionPool.ts
+-    |
+-    └── routes/                     # Route definitions
+-        └── router.ts
         

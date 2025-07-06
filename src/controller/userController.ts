@@ -1,7 +1,7 @@
 import { UserTransaction } from "../service/user/user.service";
 import passwordController from "../service/auth/passwordService";
 import mySQLConnectionPool from "../db/mysql/mySQLConnectionPool";
-import userSignupValidation from "../validation/userSignupValidation";
+import userSignupValidation from "../validation/user.signup.validation";
 import { UserModel } from "../model/user/user.model";
 import { IMessageDocument } from "../model/messagesModel";
 
