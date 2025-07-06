@@ -8,11 +8,11 @@ import cors from "cors";
 
 // Local imports (ESM-aware)
 import middlewareSession from "./middleware/session.js";
-import mongoDBconnection from "./db/mongodb/mongodbConnection.js";
+import mongoDBconnection from "./db/mongodb/mongodb.connection.js";
 import router from "./routes/router.js";
-import handleSocketConnection from "./socket/socketServer.js";
+import handleSocketConnection from "./socket/socket.server.js";
 import { setSecurityHeaders } from "./middleware/securityHeaders.js";
-import Message from "./model/messagesModel.js";
+import Message from "./model/messages.model.js";
 import isAuthenticated from "./middleware/authentication.js";
 
 dotenv.config();

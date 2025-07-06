@@ -1,9 +1,9 @@
 import { UserTransaction } from "../service/user/user.service";
-import passwordController from "../service/auth/passwordService";
-import mySQLConnectionPool from "../db/mysql/mySQLConnectionPool";
+import passwordController from "../service/auth/password.service";
+import mySQLConnectionPool from "../db/mysql/mysql.connection-pool";
 import userSignupValidation from "../validation/user.signup.validation";
 import { UserModel } from "../model/user/user.model";
-import { IMessageDocument } from "../model/messagesModel";
+import { IMessageDocument } from "../model/messages.model";
 
 const user = new UserModel(mySQLConnectionPool);
 

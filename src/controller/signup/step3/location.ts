@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import mySQLConnectionPool from "../../../db/mysql/mySQLConnectionPool.js";
+import mySQLConnectionPool from "../../../db/mysql/mysql.connection-pool.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { UserController } from "../../userController";
+import { UserController } from "../../user.controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +20,7 @@ interface UserLocation {
 // Handle get location
 export async function getLocation(req: Request, res: Response): Promise<void> {
   try {
-    res.sendFile(path.join(__dirname, "../../public/html/userLocation.html"));
+    res.sendFile(path.join(__dirname, "../../../public/html/userLocation.html"));
   } catch (error) {
     res.status(500);
   }

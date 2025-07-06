@@ -1,5 +1,5 @@
 import { RowDataPacket } from 'mysql2/promise';
-import mySQLConnectionPool from './db/mysql/mySQLConnectionPool';
+import mySQLConnectionPool from './db/mysql/mysql.connection-pool';
 
 async function initUserInfo(user_id: number) {
   const connection = await mySQLConnectionPool.getConnection();

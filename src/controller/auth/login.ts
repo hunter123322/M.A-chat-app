@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import mySQLConnectionPool from "../../db/mysql/mySQLConnectionPool.js";
-import { UserController } from "../userController.js";
+import mySQLConnectionPool from "../../db/mysql/mysql.connection-pool.js";
+import { UserController } from "../user.controller.js";
 
 
 const User = new UserController(mySQLConnectionPool);
@@ -51,7 +51,6 @@ async function getLogin(req: Request, res: Response): Promise<void> {
  * ]
  */
 async function postLogin(req: Request, res: Response): Promise<void> {
-  const sqlconnection = await mySQLConnectionPool.getConnection();
   try {
     const userData: UserAut = req.body;
     const data = await User.loginController(userData);

@@ -35,7 +35,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node try.js",
+    "test": "jest",
     "start": "bun run src/app.ts",
     "dev": "nodemon dist/app.js"
   },

@@ -1,5 +1,5 @@
-import Message from "../messagesModel";
-import { IMessageDocument } from "../messagesModel"
+import Message from "../messages.model";
+import { IMessageDocument } from "../messages.model"
 
 export async function initMessage(user_id: number): Promise<IMessageDocument[]> {
     try {

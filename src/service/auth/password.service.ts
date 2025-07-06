@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import mySQLConnectionPool from "../../db/mysql/mySQLConnectionPool.js";
+import mySQLConnectionPool from "../../db/mysql/mysql.connection-pool.js";
 import { RowDataPacket } from 'mysql2/promise';
 import { UserModel } from "../../model/user/user.model.js";
 
