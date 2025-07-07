@@ -1,6 +1,9 @@
 import { Server, Socket } from "socket.io";
 import { getMessage, postMessage } from "../../service/message/message.socket.service";
 import type { MessageDataType } from "../../types/message.type";
+import Message from "../../model/messages.model";
+
+type EditMessage = { messageId: string, editedMessage: string };
 
 export function registerMessageEvents(socket: Socket) {
     socket.on("getMessage", async (latestMessage: MessageDataType, callback?: Function) => {
@@ -34,4 +37,10 @@ export function chatMessageEvent(socket: Socket, io: Server) {
         );
         io.to(msg.conversationID).emit("recieveMessage", saveMessage);
     });
+}
+
+export function editMessage(socket: Socket) {
+    socket.on("editMessage", async (data: EditMessage) => {
+        const updateMessage = await Message.findOneAndUpdate({ _id: data.messageId }, { content: data.editedMessage });
+    })
 }

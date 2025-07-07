@@ -1,3 +1,5 @@
+const userID = localStorage.getItem("user_id");
+
 export default function initMessage (event) {
   const messageElement = document.getElementById("content");
   messageElement.textContent = "";
@@ -7,18 +9,12 @@ export default function initMessage (event) {
 
   // Get the message and user_id in local storage
   let message = JSON.parse(localStorage.getItem("messageData")) || [];
-  const userID = localStorage.getItem("user_id");
 
   // 1. Get data from the clicked contact card
   const contactName = clickedCard.querySelector(".personName").textContent;
   const contactID = clickedCard.id;
-
   
-  // console.log(message)
   message.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  // console.log(message)
-
-
 
   // 2. Change the display area
   const displayDiv = document.getElementById("contactName");
@@ -35,33 +31,158 @@ export default function initMessage (event) {
   });
 };
 
-// Optional: Add hover effects via JavaScript
-document.querySelectorAll(".contact-card").forEach((card) => {
-  card.addEventListener("mouseenter", () => {
-    card.style.transform = "scale(1.02)";
-    card.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-  });
+export function editMessage(messageId, editedMessage) {
+  if (
+    typeof messageId !== 'string' || !messageId.trim() ||
+    typeof editedMessage !== 'string' || !editedMessage.trim()
+  ) {
+    console.warn("Invalid messageId or editedMessage");
+    return;
+  }
 
-  card.addEventListener("mouseleave", () => {
-    card.style.transform = "scale(1)";
-    card.style.boxShadow = "none";
-  });
-});
-// -- //
+  const data = { messageId: messageId, editedMessage: editedMessage };
+  socket.emit("editMessage", data);
+}
+
+export function reactMessage(messageId, reaction) {
+  if (
+    typeof messageId !== 'string' || !messageId.trim() ||
+    typeof reaction !== 'string' || !reaction.trim()
+  ) {
+    console.warn("Invalid messageId or reaction");
+    return;
+  }
+
+  const data = { messageId, messageId, messageReaction: reaction };
+  socket.emit("messageReaction", data);
+}
+
+
+export function deleteMessage(messageId, userID) {
+  if (
+    typeof messageId !== 'string' || messageId.trim() === '' ||
+    typeof userID !== 'string' || userID.trim() === ''
+) {
+  return;
+}
+
+  const data = { messageId: messageId, userID: userID}
+  socket.emit("deleteMessage", data);
+}
+
+export class MenuFunctions {
+  static edit(messageElement) {
+    const currentText = messageElement.querySelector('.message-content span').textContent;
+    const messageId = messageElement.id;
+    
+    const newText = prompt('Edit message:', currentText);
+    if (newText !== null) {
+      messageElement.querySelector('.message-content span').textContent = newText;
+    }
+  }
+
+  static copy(messageElement) {
+    const textToCopy = messageElement.querySelector('.message-content span').textContent;
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => console.log('Copied:', textToCopy))
+      .catch(err => console.error('Copy failed:', err));
+  }
+
+  static react(messageElement) {
+    const reactionContainer = messageElement.querySelector('.reactions') || 
+      (() => {
+        const container = document.createElement('div');
+        container.className = 'reactions';
+        messageElement.querySelector('.message-content').appendChild(container);
+        return container;
+      })();
+
+    reactionContainer.innerHTML = '';
+    
+    const emojiPicker = document.createElement('div');
+    emojiPicker.className = 'emoji-picker';
+    
+    const emojis = ['😀', '❤️', '👍', '😂', '😮'];
+    emojis.forEach(emoji => {
+      const button = document.createElement('button');
+      button.textContent = emoji;
+      button.onclick = (e) => {
+        e.stopPropagation();
+        this.#handleEmojiSelection(button, emoji, reactionContainer, emojiPicker);
+      };
+      emojiPicker.appendChild(button);
+    });
+
+    reactionContainer.appendChild(emojiPicker);
+    this.#setupOutsideClickHandler(reactionContainer, emojiPicker);
+  }
+
+  static delete(messageElement) {
+    if (confirm('Delete this message?')) {
+      messageElement.remove();
+      console.log('Message deleted');
+    }
+  }
+
+  static #handleEmojiSelection(button, emoji, reactionContainer, emojiPicker) {
+    button.style.transform = 'scale(1.3)';
+    setTimeout(() => {
+      button.style.transform = '';
+    }, 200);
+    
+    const reactionBadge = document.createElement('span');
+    reactionBadge.className = 'reaction-badge';
+    reactionBadge.textContent = emoji;
+    reactionContainer.appendChild(reactionBadge);
+    
+    emojiPicker.remove();
+  }
+
+  static #setupOutsideClickHandler(reactionContainer, emojiPicker) {
+    const clickHandler = (e) => {
+      if (!reactionContainer.contains(e.target)) {
+        emojiPicker.remove();
+        document.removeEventListener('click', clickHandler);
+      }
+    };
+    
+    setTimeout(() => {
+      document.addEventListener('click', clickHandler);
+    }, 0);
+  }
+}
 
 const menuItems = [
-  { icon: 'fa-edit', text: 'Edit', action: () => console.log('Edit clicked') },
-  { icon: 'fa-copy', text: 'Copy', action: () => console.log('Copy clicked') },
+  { 
+    icon: 'fa-edit', 
+    text: 'Edit', 
+    action: (messageElement) => MenuFunctions.edit(messageElement)
+  },
   { type: 'divider' },
-  { icon: 'fa-smile', text: 'React', action: () => console.log('React clicked') },
+  { 
+    icon: 'fa-copy', 
+    text: 'Copy', 
+    action: (messageElement) => MenuFunctions.copy(messageElement)
+  },
   { type: 'divider' },
-  { icon: 'fa-trash', text: 'Delete', action: () => console.log('Delete clicked'), class: 'danger' },
+  { 
+    icon: 'fa-smile', 
+    text: 'React', 
+    action: (messageElement) => MenuFunctions.react(messageElement)
+  },
+  { type: 'divider' },
+  { 
+    icon: 'fa-trash', 
+    text: 'Delete', 
+    action: (messageElement) => MenuFunctions.delete(messageElement),
+    class: 'danger' 
+  }
 ];
 
-function displayMessage(text, isMine, messageId) {
+export function displayMessage(text, isMine, messageId) {
   const messageContainer = document.createElement("div");
   messageContainer.classList.add(isMine ? "myText" : "text");
-  messageContainer.id = ""
+  messageContainer.id = messageId;
 
   const messageDiv = document.createElement("div");
   messageDiv.className = "message-content";
@@ -75,9 +196,7 @@ function displayMessage(text, isMine, messageId) {
   // Menu container
   const container = document.createElement('div');
   container.className = 'menu-container';
-  messageDiv.appendChild(container);  // Attach to messageDiv
-
-  
+  messageDiv.appendChild(container);
 
   // Menu button
   const menuButton = document.createElement('div');
@@ -90,23 +209,19 @@ function displayMessage(text, isMine, messageId) {
   popupMenu.className = 'popup-menu';
   container.appendChild(popupMenu);
 
-
-// Dynamically position the menu based on who sent the message
-if (isMine) {
-  container.style.right = '0.05rem';
-  container.style.top = '0.05rem';
-  container.style.left = 'auto';
-  popupMenu.style.left = '-15rem';
+  // Position based on message ownership
+  if (isMine) {
+    container.style.right = '0.05rem';
+    container.style.left = 'auto';
+    popupMenu.style.left = '-15rem';
+  } else {
+    container.style.left = '0.25rem';
+    container.style.right = 'auto';
+    popupMenu.style.right = '-15rem';
+  }
   popupMenu.style.top = '-8.5rem';
-} else {
-  container.style.left = '0.25rem';
-  container.style.right = 'auto';
-  popupMenu.style.right = '-15rem';
-  popupMenu.style.top = '-8.5rem';
-}
 
-
-  // Menu items
+  // Create menu items
   menuItems.forEach(item => {
     if (item.type === 'divider') {
       const divider = document.createElement('div');
@@ -120,14 +235,15 @@ if (isMine) {
       icon.className = `fas ${item.icon}`;
       menuItem.appendChild(icon);
 
-      const text = document.createElement('span');
-      text.textContent = item.text;
-      menuItem.appendChild(text);
+      const textSpan = document.createElement('span');
+      textSpan.textContent = item.text;
+      menuItem.appendChild(textSpan);
 
-      menuItem.addEventListener('click', () => {
-        item.action();
+      menuItem.addEventListener('click', (e) => {
+        e.stopPropagation();
+        item.action(messageContainer); // Pass the message container
         popupMenu.classList.remove('show');
-
+        
         // Visual feedback
         menuItem.style.backgroundColor = 'rgba(0,0,0,0.1)';
         setTimeout(() => {
@@ -139,25 +255,21 @@ if (isMine) {
     }
   });
 
-  // Toggle popup
+  // Toggle menu visibility
   menuButton.addEventListener('click', (e) => {
     e.stopPropagation();
     popupMenu.classList.toggle('show');
   });
 
-  // Hide popup on outside click
-  document.addEventListener('click', (e) => {
-    if (!popupMenu.contains(e.target) && e.target !== menuButton) {
-      popupMenu.classList.remove('show');
-    }
+  // Close menu when clicking outside
+  document.addEventListener('click', () => {
+    popupMenu.classList.remove('show');
   });
 
-  // Finally append message to the actual container on the page
   document.getElementById('content').appendChild(messageContainer);
 }
 
-
-function filterMessage(localMessage, senderID, receiverID) {
+function filterMessage(localMessage, userID, receiverID) {
   // 1. Handle case where localMessage isn't an array
   if (!Array.isArray(localMessage)) {
     console.error("filterMessages: Expected array, got", typeof localMessage);
@@ -178,3 +290,16 @@ function filterMessage(localMessage, senderID, receiverID) {
     if (isValidPair[`${message.senderID}-${message.receiverID}`]) return message;
   });
 }
+
+// Optional: Add hover effects via JavaScript
+document.querySelectorAll(".contact-card").forEach((card) => {
+  card.addEventListener("mouseenter", () => {
+    card.style.transform = "scale(1.02)";
+    card.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "scale(1)";
+    card.style.boxShadow = "none";
+  });
+}); 

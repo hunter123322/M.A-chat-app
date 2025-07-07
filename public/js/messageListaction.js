@@ -1,3 +1,5 @@
+
+import { displayMessage } from "./chatAction/displayMessage.js";
 // DOM Elements
 const sendButton = document.getElementById("sendButton");
 const inputMessage = document.getElementById("inputMessage");
@@ -25,7 +27,7 @@ let conversationID = null;
 
 // Socket Connection
 const socket = io("http://localhost:3000", {
-  auth: { userId: userID },
+  auth: { user_id: userID },
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
 });
@@ -87,7 +89,7 @@ function isValidMessage(data) {
 
 function processIncomingMessage(data) {
   const isMine = data.senderID === userID;
-  displayMessage(data.content, isMine);
+  displayMessage(data.content, isMine, data._id);
 
   const exists = messages.some(m =>
     m.content === data.content &&
@@ -118,12 +120,6 @@ function createMessageData(text) {
   };
 }
 
-function displayOptimisticMessage(messageData) {
-  displayMessage(messageData.content, true);
-  messages.push(messageData);
-  messageSave.save(messages);
-}
-
 function sendToServer(messageData) {
   socket.emit("chatMessage", messageData);
 }
@@ -132,9 +128,3 @@ function resetInput() {
   inputMessage.value = "";
 }
 
-function displayMessage(text, isMine) {
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add(isMine ? "myText" : "text");
-  messageDiv.textContent = text;
-  messageContainer.appendChild(messageDiv);
-}

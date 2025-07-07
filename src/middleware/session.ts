@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import session, { SessionOptions } from "express-session";
 import MongoStore from "connect-mongo";
 
-const middlewareSession: SessionOptions = {
+export const middlewareSession: SessionOptions = {
   genid: function (req) {
     return randomUUID(); // use UUIDs for session IDs
   },

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import messaging from "../../model/messaging.js";
+// import messaging from "../../model/messaging.js";
+
+let messaging: any;
 
 async function getConversation(req: Request, res: Response) {
   try {
