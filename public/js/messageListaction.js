@@ -1,10 +1,7 @@
-
 import { displayMessage } from "./chatAction/displayMessage.js";
-// DOM Elements
-const sendButton = document.getElementById("sendButton");
+import { socket } from "./socket/socket.event.js";
+
 const inputMessage = document.getElementById("inputMessage");
-const messageContainer = document.getElementById("content");
-const searchMessage = document.querySelectorAll("#searchContact")[1];
 const contactList = document.getElementById("contactList");
 
 // Message storage class (PascalCase)
@@ -19,18 +16,14 @@ class SaveToLocalStorage {
 }
 
 // User and Connection Setup
-const userID = localStorage.getItem("user_id") || `temp-${Date.now()}`;
+const userID = localStorage.getItem("user_id");
 const messageSave = new SaveToLocalStorage();
 let messages = JSON.parse(localStorage.getItem("messageData")) || [];
 let receiverID = null;
 let conversationID = null;
 
 // Socket Connection
-const socket = io("http://localhost:3000", {
-  auth: { user_id: userID },
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-});
+
 
 // Event Listeners
 // sendButton?.addEventListener("click", sendMessage);
@@ -75,6 +68,7 @@ function sendMessage() {
 
   const messageData = createMessageData(text);
   sendToServer(messageData);
+  console.log(messageData)
   resetInput();
 }
 
@@ -109,12 +103,14 @@ function validateSendConditions(text) {
   return text && receiverID && conversationID;
 }
 
-function createMessageData(text) {
+function createMessageData(text, emoji) {
+  if(!emoji) emoji = ""
   return {
     senderID: userID,
     receiverID: receiverID,
     conversationID: conversationID,
     content: text,
+    reactions: [{ userID: userID, emoji: emoji }, { userID: receiverID, emoji: "" }],
     createdAt: new Date(),
     updatedAt: new Date(),
   };

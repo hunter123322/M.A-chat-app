@@ -1,6 +1,6 @@
 import Message from "../../model/messages.model";
 import { randomUUID } from "crypto";
-import type { MessageDataType } from "../../types/message.type";
+import { MessageDataType, IReaction } from "../../types/message.type";
 
 export async function getMessage(convoID: String, lastTimestamp: any): Promise<any[]> {
     try {
@@ -24,7 +24,13 @@ export async function getMessage(convoID: String, lastTimestamp: any): Promise<a
     }
 }
 
-export async function postMessage(content: String, sender: String, reciever: String, conversationId?: String): Promise<MessageDataType> {
+export async function postMessage(
+    content: String,
+    sender: String,
+    reciever: String,
+    reactions: Array<IReaction>,
+    conversationId?: String
+): Promise<MessageDataType> {
     try {
         if (!conversationId) {
             const lastconversationID = randomUUID();
@@ -35,6 +41,7 @@ export async function postMessage(content: String, sender: String, reciever: Str
             senderID: sender,
             receiverID: reciever,
             conversationID: conversationId,
+            reactions: reactions,
             content: content
         });
 

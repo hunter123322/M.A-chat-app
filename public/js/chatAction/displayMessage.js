@@ -1,3 +1,6 @@
+import { MenuFunctions } from "./menu.function.js";
+import { handleEmojiSelection, createReactionContainer } from "./reaction.helper.js";
+
 const userID = localStorage.getItem("user_id");
 
 export default function initMessage (event) {
@@ -21,136 +24,17 @@ export default function initMessage (event) {
   displayDiv.textContent = `${contactName}`;
 
   // Optional: Add visual feedback
-
+  message.forEach(message => {
+console.log(message.reactions[0])
+  });
   const filteredMessage = filterMessage(message, userID, contactID);
   console.log(filteredMessage);
   
   filteredMessage.reverse().forEach((message) => {
     const bool = userID == message.senderID;
-    displayMessage(message.content, bool, message._id);
+    displayMessage(message.content, bool, message._id, message.reactions[0].emoji);
   });
 };
-
-export function editMessage(messageId, editedMessage) {
-  if (
-    typeof messageId !== 'string' || !messageId.trim() ||
-    typeof editedMessage !== 'string' || !editedMessage.trim()
-  ) {
-    console.warn("Invalid messageId or editedMessage");
-    return;
-  }
-
-  const data = { messageId: messageId, editedMessage: editedMessage };
-  socket.emit("editMessage", data);
-}
-
-export function reactMessage(messageId, reaction) {
-  if (
-    typeof messageId !== 'string' || !messageId.trim() ||
-    typeof reaction !== 'string' || !reaction.trim()
-  ) {
-    console.warn("Invalid messageId or reaction");
-    return;
-  }
-
-  const data = { messageId, messageId, messageReaction: reaction };
-  socket.emit("messageReaction", data);
-}
-
-
-export function deleteMessage(messageId, userID) {
-  if (
-    typeof messageId !== 'string' || messageId.trim() === '' ||
-    typeof userID !== 'string' || userID.trim() === ''
-) {
-  return;
-}
-
-  const data = { messageId: messageId, userID: userID}
-  socket.emit("deleteMessage", data);
-}
-
-export class MenuFunctions {
-  static edit(messageElement) {
-    const currentText = messageElement.querySelector('.message-content span').textContent;
-    const messageId = messageElement.id;
-    
-    const newText = prompt('Edit message:', currentText);
-    if (newText !== null) {
-      messageElement.querySelector('.message-content span').textContent = newText;
-    }
-  }
-
-  static copy(messageElement) {
-    const textToCopy = messageElement.querySelector('.message-content span').textContent;
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => console.log('Copied:', textToCopy))
-      .catch(err => console.error('Copy failed:', err));
-  }
-
-  static react(messageElement) {
-    const reactionContainer = messageElement.querySelector('.reactions') || 
-      (() => {
-        const container = document.createElement('div');
-        container.className = 'reactions';
-        messageElement.querySelector('.message-content').appendChild(container);
-        return container;
-      })();
-
-    reactionContainer.innerHTML = '';
-    
-    const emojiPicker = document.createElement('div');
-    emojiPicker.className = 'emoji-picker';
-    
-    const emojis = ['😀', '❤️', '👍', '😂', '😮'];
-    emojis.forEach(emoji => {
-      const button = document.createElement('button');
-      button.textContent = emoji;
-      button.onclick = (e) => {
-        e.stopPropagation();
-        this.#handleEmojiSelection(button, emoji, reactionContainer, emojiPicker);
-      };
-      emojiPicker.appendChild(button);
-    });
-
-    reactionContainer.appendChild(emojiPicker);
-    this.#setupOutsideClickHandler(reactionContainer, emojiPicker);
-  }
-
-  static delete(messageElement) {
-    if (confirm('Delete this message?')) {
-      messageElement.remove();
-      console.log('Message deleted');
-    }
-  }
-
-  static #handleEmojiSelection(button, emoji, reactionContainer, emojiPicker) {
-    button.style.transform = 'scale(1.3)';
-    setTimeout(() => {
-      button.style.transform = '';
-    }, 200);
-    
-    const reactionBadge = document.createElement('span');
-    reactionBadge.className = 'reaction-badge';
-    reactionBadge.textContent = emoji;
-    reactionContainer.appendChild(reactionBadge);
-    
-    emojiPicker.remove();
-  }
-
-  static #setupOutsideClickHandler(reactionContainer, emojiPicker) {
-    const clickHandler = (e) => {
-      if (!reactionContainer.contains(e.target)) {
-        emojiPicker.remove();
-        document.removeEventListener('click', clickHandler);
-      }
-    };
-    
-    setTimeout(() => {
-      document.addEventListener('click', clickHandler);
-    }, 0);
-  }
-}
 
 const menuItems = [
   { 
@@ -179,7 +63,8 @@ const menuItems = [
   }
 ];
 
-export function displayMessage(text, isMine, messageId) {
+export function displayMessage(text, isMine, messageId, reaction) {
+// do the reaction
   const messageContainer = document.createElement("div");
   messageContainer.classList.add(isMine ? "myText" : "text");
   messageContainer.id = messageId;
@@ -208,6 +93,20 @@ export function displayMessage(text, isMine, messageId) {
   const popupMenu = document.createElement('div');
   popupMenu.className = 'popup-menu';
   container.appendChild(popupMenu);
+
+  if (reaction) {
+  const reactionContainer = createReactionContainer(messageContainer);
+  if (reactionContainer) {
+    handleEmojiSelection(
+      document.createElement('button'),
+      reaction,
+      reactionContainer,
+      null,
+      messageId
+    );
+  }
+}
+
 
   // Position based on message ownership
   if (isMine) {

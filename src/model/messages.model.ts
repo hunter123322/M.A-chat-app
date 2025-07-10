@@ -1,9 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { IReaction } from "../types/message.type";
 
-interface IReaction {
-  userID: string;
-  emoji?: string;
-}
 
 type MessageStatus = "sent" | "sending" | "delivered" | "seen" | "invalid";
 type ContentType = "text" | "image" | "video" | "file" | "audio";
@@ -16,6 +13,7 @@ export interface IMessage {
   contentType: ContentType;
   status: MessageStatus;
   reactions: IReaction[];
+  hide: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -38,12 +36,16 @@ const messageSchema = new Schema<IMessageDocument>(
       enum: ["text", "image", "video", "file", "audio"],
       default: "text",
     },
-    reactions: [reactionSchema],
+    reactions: [{
+      userID: { type: String, required: true },
+      emoji: { type: String },
+    }],
     status: {
       type: String,
       enum: ["sent", "sending", "delivered", "seen", "invalid"],
       default: "sent",
     },
+    hide: { type: Boolean, default: false }
   },
   {
     timestamps: true,
