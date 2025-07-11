@@ -68,7 +68,6 @@ function sendMessage() {
 
   const messageData = createMessageData(text);
   sendToServer(messageData);
-  console.log(messageData)
   resetInput();
 }
 
@@ -103,14 +102,13 @@ function validateSendConditions(text) {
   return text && receiverID && conversationID;
 }
 
-function createMessageData(text, emoji) {
-  if(!emoji) emoji = ""
+function createMessageData(text) {
   return {
     senderID: userID,
     receiverID: receiverID,
     conversationID: conversationID,
     content: text,
-    reactions: [{ userID: userID, emoji: emoji }, { userID: receiverID, emoji: "" }],
+    reactions: [{ userID: userID, emoji: "" }, { userID: receiverID, emoji: "" }],
     createdAt: new Date(),
     updatedAt: new Date(),
   };

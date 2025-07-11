@@ -16,11 +16,6 @@ interface UserAut {
   password: string;
 }
 
-/**
- * 
- * @function Get login
- * 
- */
 async function getLogin(req: Request, res: Response): Promise<void> {
   try {
     res.sendFile(path.join(__dirname, "../../../public/html/login-signup.html"));
@@ -29,27 +24,6 @@ async function getLogin(req: Request, res: Response): Promise<void> {
   }
 }
 
-/**
- * Handles a request containing user data and returns a structured response.
- *
- * @param req - The request object, expected to contain the following userData keys:
- *              - user_id: number
- *              - username: string
- *              - password: string
- *
- * @data data - The response object, which will return an array of structured objects.
- *
- * data format (Array<object>):
- * [
- *   {
- *     user_id: number,
- *     message: Array<object>
- *   },
- *   {
- *     authentication: object
- *   }
- * ]
- */
 async function postLogin(req: Request, res: Response): Promise<void> {
   try {
     const userData: UserAut = req.body;
@@ -63,6 +37,5 @@ async function postLogin(req: Request, res: Response): Promise<void> {
     console.log(error)
   }
 }
-
 
 export { postLogin, getLogin };

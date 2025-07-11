@@ -147,6 +147,11 @@ document.getElementById("login")?.addEventListener("submit", async (event) => {
         localStorage.setItem("user_id", data.user_id);
         localStorage.setItem("messageData", JSON.stringify(data.messages));
         localStorage.setItem("userInfo", JSON.stringify(data.userInfo));
+
+        const contact = [...new Set(data.messages.map(msg => msg.conversationID))];
+        console.log(contact);
+        
+        localStorage.setItem("contact", contact)
       }
       window.location.href = `/socket/v1?user=${data.user_id}`;
     } else {
@@ -154,6 +159,9 @@ document.getElementById("login")?.addEventListener("submit", async (event) => {
     }
   } catch (error) {
     loginShowError("An error occurred. Please try again.");
+    console.error(error)
   }
 });
-//# sourceMappingURL=login&signup.js.map
+
+
+

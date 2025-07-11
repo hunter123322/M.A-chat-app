@@ -23,6 +23,7 @@ export function receiveReactMessage( socket ){
     socket.on("messageReacted", async (reaction) => {
 
       const messageContainer = document.getElementById(reaction._id)
+      messageContainer.querySelector('.message-content .reactions').remove()
 
     // Get current messages from localStorage
     const messageData = JSON.parse(localStorage.getItem('messageData'));
@@ -30,10 +31,7 @@ export function receiveReactMessage( socket ){
     // Find and update the message
     const updatedMessages = messageData.map(msg => 
         msg._id === reaction._id ? reaction : msg
-    );
-
-    
-    
+    );    
     // Save back to localStorage
     localStorage.setItem('messageData', JSON.stringify(updatedMessages));
 
@@ -54,6 +52,7 @@ const reactionContainer = createReactionContainer(messageContainer);
 Object.entries(emojiMap).forEach(([emoji, count]) => {
   const badge = document.createElement('span');
   badge.className = 'reaction-badge';
+  badge.id = ""
   badge.textContent = count > 1 ? `${count}${emoji}` : emoji;
   reactionContainer.appendChild(badge);
 });

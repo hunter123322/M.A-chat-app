@@ -15,7 +15,7 @@ interface UserAut {
 // Handle get signup
 export async function getSingup(req: Request, res: Response): Promise<void> {
   try {
-    res.sendFile(path.join(__dirname, "../../../public/html/login-signup.html"));
+    res.sendFile(path.join(__dirname, "../../../../public/html/login-signup.html"));
   } catch (error) {
     res.status(500);
   }

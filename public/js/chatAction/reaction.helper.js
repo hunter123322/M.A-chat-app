@@ -68,7 +68,7 @@ export function onHandleEmojiSelection(button, emoji, reactionContainer, emojiPi
   const badge = document.createElement('span');
   badge.className = 'reaction-badge';
   badge.textContent = emoji;
-  reactionContainer.appendChild(badge);
+  // reactionContainer.appendChild(badge);
 
   // Emit the emoji reaction to the server
   const userID = localStorage.getItem("user_id");  // get the user id in localstorage

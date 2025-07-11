@@ -94,23 +94,25 @@ export function displayMessage(text, isMine, messageId, reactions) {
   popupMenu.className = 'popup-menu';
   container.appendChild(popupMenu);
 
-const emojiMap = {};
+  if(reactions instanceof Array) {  
+    const emojiMap = {};
 
-reactions.forEach(r => {
-  if (r.emoji) {
-    emojiMap[r.emoji] = (emojiMap[r.emoji] || 0) + 1;
-  }
-});
+    reactions.forEach(r => {
+      if (r.emoji) {
+        emojiMap[r.emoji] = (emojiMap[r.emoji] || 0) + 1;
+      }
+    });
 
-const reactionContainer = createReactionContainer(messageContainer);
+    const reactionContainer = createReactionContainer(messageContainer);
 
-// Render each unique emoji with its count
-Object.entries(emojiMap).forEach(([emoji, count]) => {
-  const badge = document.createElement('span');
-  badge.className = 'reaction-badge';
-  badge.textContent = count > 1 ? `${count}${emoji}` : emoji;
-  reactionContainer.appendChild(badge);
-});
+    // Render each unique emoji with its count
+    Object.entries(emojiMap).forEach(([emoji, count]) => {
+      const badge = document.createElement('span');
+      badge.className = 'reaction-badge';
+      badge.textContent = count > 1 ? `${count}${emoji}` : emoji;
+      reactionContainer.appendChild(badge);
+    });
+}
 
   // Position based on message ownership
   if (isMine) {
