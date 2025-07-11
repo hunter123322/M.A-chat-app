@@ -1,7 +1,7 @@
 import { deleteMessage } from "./socket.emit/delete.message.emit.js";
 import { editMessage } from "./socket.emit/edit.message.emit.js";
 import { reactMessage } from "./socket.emit/react.message.emit.js";
-import { receiveEditMessage } from "./socket.on.js/edit.message.on.js";
+import { receiveEditMessage, receiveReactMessage } from "./socket.on.js/edit.message.on.js";
 
 
 
@@ -21,10 +21,11 @@ export class EmitMenuAction {
       
     }
 
-    static messageReaction ( messageId, reaction) {
+    static messageReaction ( messageId, reaction, userID) {
       const data = reactMessage( messageId, reaction, userID)
+      console.log(data);
+      
       socket.emit("messageReaction", data );
-      console.log(data)
     }
 
     static deleteMessage ( messageId, userID ) {
@@ -33,3 +34,4 @@ export class EmitMenuAction {
 }
 
 receiveEditMessage( socket );
+receiveReactMessage( socket )

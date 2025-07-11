@@ -5,7 +5,6 @@ export function renderEditedMessage(editedText, textID) {
   const span = message.querySelector(".message-content span");
   if (span && editedText !== null) {
     span.textContent = editedText;
-    console.log(span)
   }
 }
 

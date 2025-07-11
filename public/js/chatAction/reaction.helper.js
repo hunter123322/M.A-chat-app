@@ -38,7 +38,7 @@ export function createEmojiPicker(reactionContainer, messageElement) {
     // When an emoji is clicked, trigger reaction logic
     button.onclick = (e) => {
       e.stopPropagation(); // Prevent click from closing picker immediately
-      handleEmojiSelection(button, emoji, reactionContainer, emojiPicker, messageElement.id);
+      onHandleEmojiSelection(button, emoji, reactionContainer, emojiPicker, messageElement.id);
     };
 
     emojiPicker.appendChild(button);
@@ -57,7 +57,7 @@ export function createEmojiPicker(reactionContainer, messageElement) {
  * @param {HTMLElement} emojiPicker - The emoji picker element (to remove)
  * @param {string} messageId - ID of the message being reacted to
  */
-export function handleEmojiSelection(button, emoji, reactionContainer, emojiPicker, messageId) {
+export function onHandleEmojiSelection(button, emoji, reactionContainer, emojiPicker, messageID) {
   // Simple click animation
   button.style.transform = 'scale(1.3)';
   setTimeout(() => {
@@ -71,13 +71,33 @@ export function handleEmojiSelection(button, emoji, reactionContainer, emojiPick
   reactionContainer.appendChild(badge);
 
   // Emit the emoji reaction to the server
-  const userID = localStorage.getItem("user_id");
-  EmitMenuAction.messageReaction(messageId, emoji, userID);
+  const userID = localStorage.getItem("user_id");  // get the user id in localstorage
+
+if (!userID) {
+  console.warn("User ID is missing from localStorage!");
+  return; // Prevent sending invalid data
+}
+  
+  EmitMenuAction.messageReaction(messageID, emoji, userID);
 
   // Close the picker
   if(emojiPicker){
   emojiPicker.remove();
   }
+}
+
+export function handleEmojiSelection(button, emoji, reactionContainer, emojiPicker, messageId) {
+  // Simple click animation
+  button.style.transform = 'scale(1.3)';
+  setTimeout(() => {
+    button.style.transform = '';
+  }, 200);
+
+  // Add emoji badge to the message UI
+  const badge = document.createElement('span');
+  badge.className = 'reaction-badge';
+  badge.textContent = emoji;
+  reactionContainer.appendChild(badge);
 }
 
 /**

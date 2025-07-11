@@ -32,7 +32,7 @@ console.log(message.reactions[0])
   
   filteredMessage.reverse().forEach((message) => {
     const bool = userID == message.senderID;
-    displayMessage(message.content, bool, message._id, message.reactions[0].emoji);
+    displayMessage(message.content, bool, message._id, message.reactions);
   });
 };
 
@@ -63,7 +63,7 @@ const menuItems = [
   }
 ];
 
-export function displayMessage(text, isMine, messageId, reaction) {
+export function displayMessage(text, isMine, messageId, reactions) {
 // do the reaction
   const messageContainer = document.createElement("div");
   messageContainer.classList.add(isMine ? "myText" : "text");
@@ -94,19 +94,23 @@ export function displayMessage(text, isMine, messageId, reaction) {
   popupMenu.className = 'popup-menu';
   container.appendChild(popupMenu);
 
-  if (reaction) {
-  const reactionContainer = createReactionContainer(messageContainer);
-  if (reactionContainer) {
-    handleEmojiSelection(
-      document.createElement('button'),
-      reaction,
-      reactionContainer,
-      null,
-      messageId
-    );
-  }
-}
+const emojiMap = {};
 
+reactions.forEach(r => {
+  if (r.emoji) {
+    emojiMap[r.emoji] = (emojiMap[r.emoji] || 0) + 1;
+  }
+});
+
+const reactionContainer = createReactionContainer(messageContainer);
+
+// Render each unique emoji with its count
+Object.entries(emojiMap).forEach(([emoji, count]) => {
+  const badge = document.createElement('span');
+  badge.className = 'reaction-badge';
+  badge.textContent = count > 1 ? `${count}${emoji}` : emoji;
+  reactionContainer.appendChild(badge);
+});
 
   // Position based on message ownership
   if (isMine) {

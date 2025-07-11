@@ -1,4 +1,7 @@
-export function reactMessage(messageId, reaction) {
-  const data = { messageId, messageId, messageReaction: reaction };
-  return data;
+export function reactMessage(messageId, reaction, userID) {
+  return {
+    messageID: messageId,
+    messageReaction: reaction,
+    userID: userID
+  };
 }

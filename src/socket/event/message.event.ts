@@ -54,21 +54,52 @@ export function editMessage(socket: Socket, io: Server) {
     })
 }
 
+type ReactionData = {
+    messageReaction: string,
+    userID: string,
+    messageID: string,
+}
+
 export function messageReaction(socket: Socket, io: Server) {
-    socket.on("messageReaction", async (data) => {
-        const reaction = await Message.findOneAndUpdate<IMessage>(
-            { _id: data.messageId },
+    socket.on("messageReaction", async (data: ReactionData) => {
+        const { messageID, userID, messageReaction } = data;
+        console.log(data);
+
+        // Try to update an existing reaction by that user
+        const updated = await Message.findOneAndUpdate<IMessage>(
+            {
+                _id: messageID,
+                "reactions.userID": userID
+            },
             {
                 $set: {
-                    "reactions.0.emoji": data.messageReaction,       // Update emoji at index 0
-                    "reactions.0.userID": data.userID        // Optional: Update other fields
+                    "reactions.$.emoji": messageReaction
                 }
-            }, { new: true }
+            },
+            { new: true }
         );
-        if (reaction) {
-            io.to(reaction.conversationID).emit("messageReacted", reaction);
-            console.log(data)
+        console.log(updated);
+        
 
+        // If no match found (user has not reacted yet), push a new reaction
+        let finalMessage = updated;
+        if (!updated) {
+            finalMessage = await Message.findOneAndUpdate<IMessage>(
+                { _id: messageID },
+                {
+                    $push: {
+                        reactions: { userID, emoji: messageReaction }
+                    }
+                },
+                { new: true }
+            );
+        }
+        console.log(finalMessage);
+
+
+        // Emit to room if updated
+        if (finalMessage) {
+            io.to(finalMessage.conversationID).emit("messageReacted", finalMessage);
         }
     });
 }
