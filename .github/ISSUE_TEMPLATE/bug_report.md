@@ -1,24 +1,22 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
+title: 'contact'
+labels: 'server bug'
 assignees: ''
 
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+have an error whe you create a new user or the user dont have a conversation.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. start th server 
+2. then login a user that dont have a past conversation
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+must proced to login
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
