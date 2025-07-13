@@ -72,13 +72,12 @@ export class UserController {
       throw new Error("Invalid Login!");
     }
     const initMessage = await user.initMessage(authentication.user_id);
+
     return {
       user_id: authentication.user_id,
       messages: initMessage,
       authentication,
     };
-
   }
-
 }
 

@@ -7,17 +7,20 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 // Local imports (ESM-aware)
-import middlewareSession from "./middleware/session.js";
+import sessionMiddleware from "./middleware/session.js";
 import mongoDBconnection from "./db/mongodb/mongodb.connection.js";
 import router from "./routes/router.js";
 import handleSocketConnection from "./socket/socket.server.js";
 import { setSecurityHeaders } from "./middleware/securityHeaders.js";
-import Message from "./model/messages.model.js";
 import isAuthenticated from "./middleware/authentication.js";
+import { rateLimiter } from "./middleware/rate.limit.js";
+import { initUserContact, initUserConversation } from "./model/user/user.mongo.model.js";
+
+// Types
+import type { Conversation, Participant } from "./types/conversation.list.type.js";
 
 dotenv.config();
 
-// Bun supports top-level await ✔
 await mongoDBconnection();
 
 const PORT = parseInt(process.env.PORT || "3000");
@@ -38,60 +41,106 @@ app.set("trust proxy", 1);
 app.use(setSecurityHeaders);
 app.use(cors());
 app.use(express.json());
-app.use(middlewareSession);
-app.use(express.static(path.resolve(__dirname, "../public")));
+app.use(sessionMiddleware);
+app.use(rateLimiter)
 app.use(router);
+app.use(express.static(path.resolve(__dirname, "../public")));
 
 // Routes
-app.get("/socket/v1", isAuthenticated, async (req: Request, res: Response) => {
-  try {
-    const id = (req.session as { user_id?: number }).user_id;
-    const dataToBeRender: any[] = [];
-
-    const sendedMessage = await Message.find({ senderID: id })
-      .sort({ createdAt: -1 })
-      .limit(10);
-
-    const receiveMessage = await Message.find({ receiverID: id })
-      .sort({ createdAt: -1 })
-      .limit(10);
-
-    dataToBeRender.push(sendedMessage);
-    dataToBeRender.push(receiveMessage);
-
-    const data: any = {
-      title: "person1",
-      fullName: "Unknown User",
-      status: "Unknown",
-      contactList: [
-        { id: "14", name: "Alice", img: "person1.webp" },
-        { id: "3", name: "new", img: "person2.webp" },
-        { id: "1", name: "Charlie", img: "person1.webp" }
-      ]
-    };
-
-    res.render("messageList", data);
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
-
-async function contactList(userID?: number): Promise<Object[]> {
-  try {
-    const result: Object[] = await Message.aggregate([
-      {
-        $group: {
-          _id: "$conversationID",
-          receiverID: { $first: "$receiverID" }
-        }
-      }
-    ]);
-    return result;
-  } catch (error) {
-    throw new Error("Failed to fetch contact List!");
-  }
+interface SessionWithUserId {
+  user_id?: number;
 }
+
+interface Contact {
+  conversationID: string | number;
+  // Add other contact properties if needed
+}
+
+interface MessageListViewData {
+  title: string;
+  fullName: string;
+  status: string;
+  contactList: Array<{
+    id: string | number;
+    name: string;
+    mute?: boolean;
+    img?: string;
+  }>;
+}
+
+// app.get("/socket/v1", isAuthenticated, async (req: Request, res: Response) => {
+//   try {
+//     // Get user ID with proper typing
+//     const session = req.session as SessionWithUserId;
+//     const userID = session.user_id;
+
+//     if (!userID) {
+//       throw new Error('User ID not found in session');
+//     }
+
+//     // Fetch user data
+//     const userContact = await initUserContact(userID);
+//     if (!userContact) {
+//       throw new Error('User contact not found');
+//     }
+
+//     const conversations = await initUserConversation(userContact.conversationID);
+//     if (!conversations?.length) {
+//       throw new Error('No conversations found');
+//     }
+
+//     // Process conversations
+//     const { contacts, currentUser } = conversations.reduce<{
+//       contacts: Participant[];
+//       currentUser?: Participant;
+//     }>((acc, conversation) => {
+//       const [participantA, participantB] = conversation.participant;
+      
+//       if (participantA.userID == userID) {
+//         acc.contacts.push(participantB);
+//         acc.currentUser = participantA;
+//       } else {
+//         acc.contacts.push(participantA);
+//         acc.currentUser = participantB;
+//       }
+      
+//       return acc;
+//     }, { contacts: [] });
+
+//     if (!currentUser) {
+//       throw new Error('Current user data not found in conversations');
+//     }
+
+//     // Prepare contact list - dynamic from conversations + static entries
+//     const dynamicContacts = contacts.map(contact => ({
+//       id: contact.userID,
+//       name: contact.nickname || contact.firstName,
+//       mute: contact.mute
+//     }));
+
+//     const staticContacts = [
+//       { id: "3", name: "new", img: "person2.webp" },
+//       { id: "1", name: "Charlie", img: "person1.webp" }
+//     ];
+
+//     // Prepare view data
+//     const viewData: MessageListViewData = {
+//       title: "M.A-Chat-App",
+//       fullName: `${currentUser.firstName} ${currentUser.lastName}`,
+//       status: "Active",
+//       contactList: [...dynamicContacts, ...staticContacts]
+//     };
+
+//     res.render("messageList", viewData);
+
+//   } catch (error) {
+//     console.error('Error in /socket/v1:', error);
+//     res.status(500).render('error', { 
+//       message: 'Failed to load messages',
+//       error: error instanceof Error ? error.message : 'Unknown error'
+//     });
+//   }
+// });
 
 // Initialize Socket.IO
 handleSocketConnection(io);

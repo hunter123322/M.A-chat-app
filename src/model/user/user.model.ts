@@ -10,19 +10,29 @@ export class UserModel {
         this.connection = mySQLConnection.getConnection();
     }
 
-    public async initMessage(user_id: number): Promise<IMessageDocument[]> {
+    public async initMessage(userID: number): Promise<IMessageDocument[]> {
         try {
-            return initMessage(user_id);
+            return initMessage(userID);
         } catch (error) {
             throw error
         }
     }
 
-    public async initUserInfo(user_id: number) {
+    public async initUserInfo(userID: number) {
         try {
-            return initUserInfo(user_id);
+            return initUserInfo(userID);
         } catch (error) {
+            throw error
 
+        }
+    }
+
+    public async initUserContact(userID: number) {
+        try {
+            return
+        } catch (error) {
+            throw error
+            
         }
     }
 }
