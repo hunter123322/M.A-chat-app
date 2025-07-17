@@ -51,7 +51,6 @@ contactList?.addEventListener("click", (event) => {
   conversationID = existingConversations[0] || generateConversationID(userID, receiverID);
 
   socket.emit("joinConversation", conversationID);
-  // loadConversationHistory();
 });
 
 // Handle incoming messages
@@ -121,4 +120,53 @@ function sendToServer(messageData) {
 function resetInput() {
   inputMessage.value = "";
 }
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchMessage');
+  const messageContainer = document.getElementById('content');
+  
+  // Store original messages
+  let originalMessages = Array.from(messageContainer.children).map(msg => {
+    return {
+      element: msg,
+      text: msg.querySelector('.message-content span')?.textContent || ''
+    };
+  });
+
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.trim().toLowerCase();
+    
+    if (searchTerm === '') {
+      // Restore original messages
+      messageContainer.innerHTML = '';
+      originalMessages.forEach(item => {
+        messageContainer.appendChild(item.element.cloneNode(true));
+      });
+      return;
+    }
+    
+    // Filter and highlight messages
+    messageContainer.innerHTML = '';
+    originalMessages.forEach(item => {
+      if (item.text.toLowerCase().includes(searchTerm)) {
+        const clone = item.element.cloneNode(true);
+        const messageSpan = clone.querySelector('.message-content span');
+        
+        if (messageSpan) {
+          const highlightedText = item.text.replace(
+            new RegExp(searchTerm, 'gi'),
+            match => `<span class="highlight">${match}</span>`
+          );
+          messageSpan.innerHTML = highlightedText;
+        }
+        
+        messageContainer.appendChild(clone);
+      }
+    });
+  });
+});
+
+
 

@@ -63,9 +63,7 @@ type ReactionData = {
 export function messageReaction(socket: Socket, io: Server) {
     socket.on("messageReaction", async (data: ReactionData) => {
         const { messageID, userID, messageReaction } = data;
-        console.log(data);
 
-        // Try to update an existing reaction by that user
         const updated = await Message.findOneAndUpdate<IMessage>(
             {
                 _id: messageID,
@@ -79,9 +77,8 @@ export function messageReaction(socket: Socket, io: Server) {
             { new: true }
         );
         console.log(updated);
-        
 
-        // If no match found (user has not reacted yet), push a new reaction
+
         let finalMessage = updated;
         if (!updated) {
             finalMessage = await Message.findOneAndUpdate<IMessage>(
@@ -101,5 +98,25 @@ export function messageReaction(socket: Socket, io: Server) {
         if (finalMessage) {
             io.to(finalMessage.conversationID).emit("messageReacted", finalMessage);
         }
+    });
+}
+
+type DeleteMessage = {
+    messageId: string,
+}
+
+export function deleteMessage(socket: Socket, io: Server) {
+    socket.on("deleteMessage", async (message: DeleteMessage) => {
+        if (!message) throw new Error("Empty message to be deleted!");
+
+        const existingMessage = await Message.findById({_id: message.messageId});
+        const conversationID = existingMessage?.conversationID;
+        console.log(conversationID);
+        
+        if (!existingMessage) throw new Error("Message not found!");
+
+        await existingMessage.deleteOne();
+
+        io.to(conversationID as string).emit("deleteMessage", message.messageId);
     });
 }

@@ -4,13 +4,13 @@ const messageBody = document.getElementById("messageBody");
 const content = document.getElementById("content");
 const person = document.getElementById;
 
-contactSearch?.addEventListener("input", () => {
-  const query = contactSearch.value.toLowerCase();
-  contacts.forEach((contact) => {
-    const name = contact.querySelector("#personName").textContent.toLowerCase();
-    contact.style.display = name.includes(query) ? "block" : "none";
-  });
-});
+// contactSearch?.addEventListener("input", () => {
+//   const query = contactSearch.value.toLowerCase();
+//   contacts.forEach((contact) => {
+//     const name = contact.querySelector("#personName").textContent.toLowerCase();
+//     contact.style.display = name.includes(query) ? "block" : "none";
+//   });
+// });
 
 document.addEventListener("DOMContentLoaded", () => {
   const optionButton = document.getElementById("messagInputOption");
@@ -128,19 +128,6 @@ document.getElementById("contactList").addEventListener("click", (event) => {
   filteredMessage.reverse().forEach((message) => {
     const bool = userID == message.senderID;
     displayMessage(message.content, bool);
-  });
-});
-
-// Optional: Add hover effects via JavaScript
-document.querySelectorAll(".contact-card").forEach((card) => {
-  card.addEventListener("mouseenter", () => {
-    card.style.transform = "scale(1.02)";
-    card.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-  });
-
-  card.addEventListener("mouseleave", () => {
-    card.style.transform = "scale(1)";
-    card.style.boxShadow = "none";
   });
 });
 

@@ -24,7 +24,7 @@ body {
 
 /* Navigation Section */
 #nav {
-  width: 25%;
+  width: 20%;
   display: flex;
   flex-direction: column;
   background-color: var(--primary-dark);
@@ -58,18 +58,13 @@ body {
   opacity: 0.8;
 }
 
-#searchContact {
+#searchContact, #searchMessage {
   width: 100%;
   padding: 0.5rem 1rem;
   border-radius: 5px;
   border: none;
   margin-bottom: 1rem;
   transition: all var(--transition-speed) ease;
-}
-
-#searchContact:focus {
-  outline: 2px solid var(--my-message-bg);
-  transform: scale(1.02);
 }
 
 /* Contact List */
@@ -91,6 +86,7 @@ body {
   cursor: pointer;
   transition: all var(--transition-speed) ease;
   color: white;
+  justify-content: flex-start;
 }
 
 .contact-card:hover {
@@ -111,7 +107,7 @@ body {
 
 /* Main Chat Area */
 #main {
-  width: 75%;
+  width: 100%;
   background-color: var(--primary-dark);
   border-radius: 10px;
   margin: 0.5rem;

@@ -46,7 +46,7 @@
         <img src="../img/person1.webp" id="contactProfilePicture" />
         <h1 id="contactName"><%= fullName %></h1>
         <p id="contactStatus"><%= status %></p>
-        <input type="text" id="searchContact" placeholder="Search Message" />
+        <input type="text" id="searchMessage" placeholder="Search Message" />
       </div>
       <div id="message">
         <div id="messageBody">
@@ -73,13 +73,6 @@
 
     <!-- Add this script for logout functionality -->
     <script>
-  //     const userProfile = JSON.parse(localStorage.getItem("userInfo")) || [];
-
-  //     // Update name
-  // const fullName = `${userProfile.firstName} ${userProfile.middleName} ${userProfile.lastName}`;
-  // document.getElementById('name').textContent = fullName;
-  // document.getElementById('contactName').textContent = fullName;
-
       document
         .getElementById("logoutButton")
         .addEventListener("click", async () => {
@@ -100,16 +93,11 @@
           }
         });
         const menuButton = document.getElementsByClassName("menu-button")
-        //  menuButton.addEventListener('click', (e) => {
-        //     e.stopPropagation();
-        //     popupMenu.classList.toggle('show');
-        // });
-
-        // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!popupMenu.contains(e.target) && e.target !== menuButton) {
                 popupMenu.classList.remove('show');
             }
+            
         });
     </script>
   </body>

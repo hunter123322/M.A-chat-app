@@ -42,7 +42,7 @@ app.use(setSecurityHeaders);
 app.use(cors());
 app.use(express.json());
 app.use(sessionMiddleware);
-app.use(rateLimiter)
+// app.use(rateLimiter) //Dissable in production phase
 app.use(router);
 app.use(express.static(path.resolve(__dirname, "../public")));
 

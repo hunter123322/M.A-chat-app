@@ -8,4 +8,9 @@ export function renderEditedMessage(editedText, textID) {
   }
 }
 
-export function renderMessageReaction(){}
+export function renderDeletedMessage(textID){
+  const message = document.getElementById(textID);
+  if (!message) return;
+
+  message.remove()
+}

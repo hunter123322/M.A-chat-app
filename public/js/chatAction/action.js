@@ -1,5 +1,5 @@
-const contactSearch = document.getElementById("contactSearch");
-const contacts = document.querySelectorAll("#contactName");
+const contactSearch = document.getElementById("searchContact");
+const contacts = document.querySelectorAll(".contact-card");
 const messageBody = document.getElementById("messageBody");
 const content = document.getElementById("content");
 
@@ -10,11 +10,13 @@ import loadOlderMessage from "./scrollMessageAction.js";
 
 contactSearch?.addEventListener("input", () => {
   const query = contactSearch.value.toLowerCase();
+
   contacts.forEach((contact) => {
-    const name = contact.querySelector("#personName").textContent.toLowerCase();
-    contact.style.display = name.includes(query) ? "block" : "none";
+    const name = contact.querySelector(".personName").textContent.toLowerCase();
+    contact.style.display = name.includes(query) ? "flex" : "none";
   });
 });
+
 
 document.addEventListener("DOMContentLoaded", popUpMenu);
 

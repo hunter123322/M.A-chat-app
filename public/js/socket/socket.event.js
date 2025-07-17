@@ -1,7 +1,7 @@
 import { deleteMessage } from "./socket.emit/delete.message.emit.js";
 import { editMessage } from "./socket.emit/edit.message.emit.js";
 import { reactMessage } from "./socket.emit/react.message.emit.js";
-import { receiveEditMessage, receiveReactMessage } from "./socket.on.js/edit.message.on.js";
+import { receiveDeletedMessage, receiveEditMessage, receiveReactMessage } from "./socket.on.js/edit.message.on.js";
 
 
 
@@ -28,10 +28,12 @@ export class EmitMenuAction {
       socket.emit("messageReaction", data );
     }
 
-    static deleteMessage ( messageId, userID ) {
-      socket.emit("deleteMessage", deleteMessage( messageId, userID ));
+    static deleteMessage ( messageId ) {
+      socket.emit("deleteMessage", deleteMessage( messageId ));
+      console.log(messageId)
     }
 }
 
 receiveEditMessage( socket );
 receiveReactMessage( socket )
+receiveDeletedMessage( socket );

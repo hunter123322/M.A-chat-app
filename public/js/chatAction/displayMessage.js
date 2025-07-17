@@ -25,10 +25,8 @@ export default function initMessage (event) {
 
   // Optional: Add visual feedback
   message.forEach(message => {
-console.log(message.reactions[0])
   });
   const filteredMessage = filterMessage(message, userID, contactID);
-  console.log(filteredMessage);
   
   filteredMessage.reverse().forEach((message) => {
     const bool = userID == message.senderID;
@@ -195,16 +193,3 @@ function filterMessage(localMessage, userID, receiverID) {
     if (isValidPair[`${message.senderID}-${message.receiverID}`]) return message;
   });
 }
-
-// Optional: Add hover effects via JavaScript
-document.querySelectorAll(".contact-card").forEach((card) => {
-  card.addEventListener("mouseenter", () => {
-    card.style.transform = "scale(1.02)";
-    card.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-  });
-
-  card.addEventListener("mouseleave", () => {
-    card.style.transform = "scale(1)";
-    card.style.boxShadow = "none";
-  });
-}); 

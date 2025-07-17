@@ -1,11 +1,11 @@
-export function deleteMessage(messageId, userID) {
+export function deleteMessage(messageId) {
   if (
-    typeof messageId !== 'string' || messageId.trim() === '' ||
-    typeof userID !== 'string' || userID.trim() === ''
+    typeof messageId !== 'string' || messageId.trim() === ''
 ) {
   return;
 }
 
-  const data = { messageId: messageId, userID: userID}
+  const data = { messageId: messageId}
   return data;
 }
+

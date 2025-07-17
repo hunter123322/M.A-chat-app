@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { chatMessageEvent, editMessage, messageReaction, registerMessageEvents } from "./event/message.event.js";
+import { chatMessageEvent, deleteMessage, editMessage, messageReaction, registerMessageEvents } from "./event/message.event.js";
 import { joinConversationEvent } from "./event/room.event.js";
 import session from "../middleware/session.js";
 
@@ -26,6 +26,7 @@ async function handleSocketConnection(io: Server) {
     chatMessageEvent(socket, io);
     editMessage(socket, io)
     messageReaction(socket, io)
+    deleteMessage(socket, io)
 
 
 

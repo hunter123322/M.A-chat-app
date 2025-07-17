@@ -34,6 +34,10 @@ export class MenuFunctions {
   static delete(messageElement) {
       if (confirm('Delete this message?')) {
       messageElement.remove();
+
+    const messageId = messageElement.id;
+        EmitMenuAction.deleteMessage(messageId)
+
       console.log('Message deleted');
     }
   }

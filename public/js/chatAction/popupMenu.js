@@ -10,37 +10,52 @@ export default function popupMenu(){
   fileInput.style.display = "none";
   document.body.appendChild(fileInput);
 
-  optionButton.addEventListener("click", () => {
-    popupMenu.classList.toggle("hidden");
+// Toggle popup on icon/button click
+optionButton.addEventListener("click", (e) => {
+  e.stopPropagation(); // Prevent it from immediately closing
+  popupMenu.classList.toggle("hidden");
+});
+
+// Close popup when clicking outside
+document.addEventListener("click", (e) => {
+  const isClickInsidePopup = popupMenu.contains(e.target);
+  const isClickOnButton = optionButton.contains(e.target);
+  
+  if (!isClickInsidePopup && !isClickOnButton) {
+    popupMenu.classList.add("hidden");
+  }
+});
+
+
+// Your existing code for option clicks
+document.querySelectorAll(".popupOption").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation(); // Prevents the document click from firing immediately
+    const target = e.currentTarget;
+    const type = target.dataset.type;
+
+    switch (type) {
+      case "png":
+        fileInput.accept = "image/png";
+        break;
+      case "video":
+        fileInput.accept = "video/*";
+        break;
+      case "gif":
+        fileInput.accept = "image/gif";
+        break;
+      case "file":
+        fileInput.accept = "*/*";
+        break;
+      default:
+        fileInput.accept = "";
+    }
+
+    fileInput.click();
+    popupMenu.classList.add("hidden");
   });
+});
 
-  document.querySelectorAll(".popupOption").forEach((btn) => {
-    btn.addEventListener("click", (e) => {f
-      const target = e.currentTarget;
-      const type = target.dataset.type;
-
-      // Filter accepted file types
-      switch (type) {
-        case "png":
-          fileInput.accept = "image/png";
-          break;
-        case "video":
-          fileInput.accept = "video/*";
-          break;
-        case "gif":
-          fileInput.accept = "image/gif";
-          break;
-        case "file":
-          fileInput.accept = "*/*";
-          break;
-        default:
-          fileInput.accept = "";
-      }
-
-      fileInput.click();
-      popupMenu.classList.add("hidden");
-    });
-  });
 
   fileInput.addEventListener("change", () => {
     const file = fileInput.files && fileInput.files[0];

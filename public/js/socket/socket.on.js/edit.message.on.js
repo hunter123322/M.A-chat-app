@@ -1,5 +1,5 @@
 import { createReactionContainer, handleEmojiSelection } from "../../chatAction/reaction.helper.js";
-import { renderEditedMessage } from "../../chatAction/render.edited.message.js";
+import { renderDeletedMessage, renderEditedMessage } from "../../chatAction/render.edited.message.js";
 
 export function receiveEditMessage( socket ){
     socket.on("messageEdited", (updatedMessage) => {
@@ -57,4 +57,19 @@ Object.entries(emojiMap).forEach(([emoji, count]) => {
   reactionContainer.appendChild(badge);
 });
     });
+}
+
+export function receiveDeletedMessage(socket) {
+  socket.on("deleteMessage", async (messageID) => {
+    let messageData = JSON.parse(localStorage.getItem("messageData")) || [];
+    
+
+    // Remove the message with the given ID
+    messageData = messageData.filter(message => message._id !== messageID);
+
+    // Update localStorage
+    localStorage.setItem("messageData", JSON.stringify(messageData));
+    renderDeletedMessage(messageID)
+
+  });
 }
