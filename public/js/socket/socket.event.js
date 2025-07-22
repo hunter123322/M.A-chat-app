@@ -1,7 +1,7 @@
 import { deleteMessage } from "./socket.emit/delete.message.emit.js";
 import { editMessage } from "./socket.emit/edit.message.emit.js";
 import { reactMessage } from "./socket.emit/react.message.emit.js";
-import { receiveDeletedMessage, receiveEditMessage, receiveReactMessage } from "./socket.on.js/edit.message.on.js";
+import { newMessageNotification, receiveDeletedMessage, receiveEditMessage, receiveReactMessage } from "./socket.on.js/edit.message.on.js";
 
 
 
@@ -37,3 +37,4 @@ export class EmitMenuAction {
 receiveEditMessage( socket );
 receiveReactMessage( socket )
 receiveDeletedMessage( socket );
+newMessageNotification( socket )

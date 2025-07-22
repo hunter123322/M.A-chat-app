@@ -1,22 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { IReaction } from "../types/message.type";
+import type { IMessage } from "../types/message.type";
 
-
-type MessageStatus = "sent" | "sending" | "delivered" | "seen" | "invalid";
-type ContentType = "text" | "image" | "video" | "file" | "audio";
-
-export interface IMessage {
-  senderID: string;
-  receiverID: string;
-  conversationID: string;
-  content: string;
-  contentType: ContentType;
-  status: MessageStatus;
-  reactions: IReaction[];
-  hide: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 export interface IMessageDocument extends IMessage, Document { }
 

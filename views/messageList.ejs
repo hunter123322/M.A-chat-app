@@ -29,7 +29,7 @@
 
       <div id="contactList">
         <% contactList.forEach(function(contact) { %>
-        <div id="<%= contact.id %>" class="contact-card">
+        <div id="<%= contact.id %>" data-timestamp="<%= contact.dataTimestamp %>" class="contact-card">
           <img
             src="../img/person1.webp"
             alt="Profile Picture"

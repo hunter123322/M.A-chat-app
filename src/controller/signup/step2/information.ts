@@ -3,16 +3,10 @@ import mySQLConnectionPool from "../../../db/mysql/mysql.connection-pool.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { UserController } from "../../user.controller.js";
+import type { UserInfo } from "../../../types/User.type.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-interface UserInfo {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  age: number;
-}
 
 // Handle get information
 export async function getInformation(req: Request, res: Response): Promise<void> {

@@ -4,33 +4,11 @@ import mySQLConnectionPool from "../db/mysql/mysql.connection-pool";
 import userSignupValidation from "../validation/user.signup.validation";
 import { UserModel } from "../model/user/user.model";
 import { IMessageDocument } from "../model/messages.model";
+import type { UserInfo, UserLocation, UserAut } from "../types/User.type";
 
 const user = new UserModel(mySQLConnectionPool);
 
 type SQLConn = typeof mySQLConnectionPool;
-
-interface UserInfo {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  age: number;
-}
-
-interface UserLocation {
-  country: string;
-  region: string;
-  district: string;
-  municipality: string;
-  barangay: string;
-  zone: string;
-  house_number: string;
-}
-
-interface UserAut {
-  user_id: number;
-  username: string;
-  password: string;
-}
 
 type UserAuthFull = UserAut & UserInfo;
 
@@ -71,10 +49,10 @@ export class UserController {
     if (!authentication) {
       throw new Error("Invalid Login!");
     }
-    const initMessage = await user.initMessage(authentication.user_id);
+    const initMessage = await user.initMessage(authentication.user_id as number);
 
     return {
-      user_id: authentication.user_id,
+      user_id: authentication.user_id as number,
       messages: initMessage,
       authentication,
     };

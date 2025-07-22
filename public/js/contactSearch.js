@@ -4,13 +4,6 @@ const messageBody = document.getElementById("messageBody");
 const content = document.getElementById("content");
 const person = document.getElementById;
 
-// contactSearch?.addEventListener("input", () => {
-//   const query = contactSearch.value.toLowerCase();
-//   contacts.forEach((contact) => {
-//     const name = contact.querySelector("#personName").textContent.toLowerCase();
-//     contact.style.display = name.includes(query) ? "block" : "none";
-//   });
-// });
 
 document.addEventListener("DOMContentLoaded", () => {
   const optionButton = document.getElementById("messagInputOption");

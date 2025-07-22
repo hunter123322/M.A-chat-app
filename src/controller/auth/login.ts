@@ -3,18 +3,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import mySQLConnectionPool from "../../db/mysql/mysql.connection-pool.js";
 import { UserController } from "../user.controller.js";
+import type { UserAut } from "../../types/User.type.js";
 
 
 const User = new UserController(mySQLConnectionPool);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-interface UserAut {
-  user_id: number;
-  username: string;
-  password: string;
-}
 
 async function getLogin(req: Request, res: Response): Promise<void> {
   try {

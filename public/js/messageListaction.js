@@ -32,6 +32,8 @@ inputMessage?.addEventListener("keydown", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
+let oldConversationID = null; // Track active conversation
+
 contactList?.addEventListener("click", (event) => {
   const clickedCard = event.target.closest(".contact-card");
   if (!clickedCard) return;
@@ -48,16 +50,24 @@ contactList?.addEventListener("click", (event) => {
       .map(msg => msg.conversationID)
   )];
 
-  conversationID = existingConversations[0] || generateConversationID(userID, receiverID);
+  let currentConversationID = existingConversations[0] || generateConversationID(userID, receiverID);
+  conversationID = currentConversationID;
 
-  socket.emit("joinConversation", conversationID);
+  if(oldConversationID === null) {
+    socket.emit("joinConversation", currentConversationID); 
+    oldConversationID = currentConversationID;
+  } else {
+    socket.emit("joinConversation", currentConversationID);
+    socket.emit("leaveRoom", oldConversationID);
+    oldConversationID = currentConversationID;
+  }
 });
 
 // Handle incoming messages
-socket.on("recieveMessage", (data) => {
-  if (!isValidMessage(data) || data.conversationID !== conversationID) return;
-  processIncomingMessage(data);
+socket.on("receiveMessage", (data) => {
   console.log("recieveMessage");
+  if (!isValidMessage(data)) return;
+  processIncomingMessage(data);
   
 });
 
@@ -75,11 +85,11 @@ function generateConversationID(id1, id2) {
   return `${[id1, id2].sort().join('_')}_${Date.now()}`;
 }
 
-function isValidMessage(data) {
+export function isValidMessage(data) {
   return data?.content && data?.senderID && data?.conversationID;
 }
 
-function processIncomingMessage(data) {
+export function processIncomingMessage(data) {
   const isMine = data.senderID === userID;
   displayMessage(data.content, isMine, data._id);
 

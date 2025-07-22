@@ -1,7 +1,8 @@
 import { Server, Socket } from "socket.io";
 import { getMessage, postMessage } from "../../service/message/message.socket.service";
+import Message from "../../model/messages.model";
 import type { MessageDataType } from "../../types/message.type";
-import Message, { IMessage } from "../../model/messages.model";
+import type { IMessage } from "../../types/message.type";
 
 type EditMessage = { messageId: string, editedMessage: string };
 
@@ -23,12 +24,21 @@ export function registerMessageEvents(socket: Socket) {
     });
 }
 
+type NotificationPayload = {
+    conversationID: string;
+    senderID: string;
+    preview: string;
+    timestamp: Date;
+};
+
 export function chatMessageEvent(socket: Socket, io: Server) {
     socket.on("chatMessage", async (msg: MessageDataType) => {
         if (!msg.content || !msg.senderID || !msg.receiverID || !msg.conversationID) {
             console.error("Invalid message format:", msg);
             return;
         }
+
+        // 1. Save message (existing logic)
         const saveMessage: MessageDataType = await postMessage(
             msg.content,
             msg.senderID,
@@ -36,7 +46,18 @@ export function chatMessageEvent(socket: Socket, io: Server) {
             msg.reactions,
             msg.conversationID
         );
-        io.to(msg.conversationID).emit("recieveMessage", saveMessage);
+
+        // 2. Broadcast to conversation room (existing)
+        io.to(msg.conversationID).emit("receiveMessage", saveMessage);
+
+        // 3. Notify receiver's personal room (new) 👇
+        io.to(`user:${msg.receiverID}`).emit("newMessageNotification", {
+            message: saveMessage,
+            conversationID: msg.conversationID,
+            senderID: msg.senderID,
+            preview: msg.content.slice(0, 30),
+            timestamp: new Date(),
+        } as NotificationPayload);
     });
 }
 
@@ -109,10 +130,10 @@ export function deleteMessage(socket: Socket, io: Server) {
     socket.on("deleteMessage", async (message: DeleteMessage) => {
         if (!message) throw new Error("Empty message to be deleted!");
 
-        const existingMessage = await Message.findById({_id: message.messageId});
+        const existingMessage = await Message.findById({ _id: message.messageId });
         const conversationID = existingMessage?.conversationID;
         console.log(conversationID);
-        
+
         if (!existingMessage) throw new Error("Message not found!");
 
         await existingMessage.deleteOne();

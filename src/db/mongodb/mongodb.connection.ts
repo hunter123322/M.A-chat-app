@@ -17,7 +17,6 @@ async function mongoDBconnection() {
 export default mongoDBconnection;
 
 
-
 class MongoDBConnection {
   private connection: Connection | null = null;
 
@@ -61,9 +60,3 @@ class MongoDBConnection {
     return this.connection;
   }
 }
-
-// Usage example:
-// const db = new MongoDBConnection('mongodb://localhost:27017/mydb');
-// await db.connect();
-// // ... use the database ...
-// await db.close();

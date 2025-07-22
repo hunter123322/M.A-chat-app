@@ -18,4 +18,5 @@ export type ContactListItem = {
   name: string;
   mute?: boolean;
   img?: string;
+  dataTimestamp?: string;
 }

@@ -1,6 +1,8 @@
 import { MenuFunctions } from "./menu.function.js";
 import { handleEmojiSelection, createReactionContainer } from "./reaction.helper.js";
 
+const findContact = (id) => { return document.getElementById(id) }
+
 const userID = localStorage.getItem("user_id");
 
 export default function initMessage (event) {
@@ -30,7 +32,7 @@ export default function initMessage (event) {
   
   filteredMessage.reverse().forEach((message) => {
     const bool = userID == message.senderID;
-    displayMessage(message.content, bool, message._id, message.reactions);
+    displayMessage(message.content, bool, message._id, message.reactions, message.createdAt, message.receiverID);
   });
 };
 
@@ -60,9 +62,19 @@ const menuItems = [
     class: 'danger' 
   }
 ];
+let newestDate = null;
 
-export function displayMessage(text, isMine, messageId, reactions) {
-// do the reaction
+export function displayMessage(text, isMine, messageId, reactions, timestamp, id) {
+  timestamp = new Date(timestamp).getTime();
+  if(newestDate === null) {
+    newestDate = timestamp;
+  } else {
+    if (newestDate < timestamp) newestDate = timestamp;
+  }
+  if (isMine) findContact(id).setAttribute("data-timestamp", newestDate)
+    
+
+
   const messageContainer = document.createElement("div");
   messageContainer.classList.add(isMine ? "myText" : "text");
   messageContainer.id = messageId;

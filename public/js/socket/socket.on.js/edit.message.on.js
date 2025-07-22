@@ -1,5 +1,7 @@
 import { createReactionContainer, handleEmojiSelection } from "../../chatAction/reaction.helper.js";
 import { renderDeletedMessage, renderEditedMessage } from "../../chatAction/render.edited.message.js";
+import { isValidMessage } from "../../messageListaction.js";
+// import { conversationID } from "../../messageListaction.js";
 
 export function receiveEditMessage( socket ){
     socket.on("messageEdited", (updatedMessage) => {
@@ -71,5 +73,53 @@ export function receiveDeletedMessage(socket) {
     localStorage.setItem("messageData", JSON.stringify(messageData));
     renderDeletedMessage(messageID)
 
+  });
+}
+
+
+const contactList = document.getElementById("contactList").addEventListener("click", (event) => {
+  let messages = JSON.parse(localStorage.getItem("messageData")) || [];  
+  const userID = localStorage.getItem("user_id");
+
+  const clickedCard = event.target.closest(".contact-card");
+    if (!clickedCard) return;
+
+      const receiverID = clickedCard.id;
+
+  const existingConversations = [...new Set(
+    messages
+      .filter(msg =>
+        (msg.senderID === userID && msg.receiverID === receiverID) ||
+        (msg.senderID === receiverID && msg.receiverID === userID)
+      )
+      .map(msg => msg.conversationID)
+  )];
+
+  return existingConversations;
+});
+
+class SaveToLocalStorage {
+  save(messages) {
+    try {
+      localStorage.setItem("messageData", JSON.stringify(messages));
+    } catch (e) {
+      console.error("Failed to save messages:", e);
+    }
+  }
+}
+
+export function newMessageNotification(socket){
+  let messages = JSON.parse(localStorage.getItem("messageData")) || [];  
+  const messageSave = new SaveToLocalStorage();
+
+  socket.on("newMessageNotification", async (notification) => {
+    const currentConversationID = contactList;
+    if (currentConversationID !== notification.conversationID) {
+      console.log(notification);
+      const {message} = notification;
+
+      messages.push({ ...message, updatedAt: new Date() });
+      messageSave.save(messages);
+    }
   });
 }

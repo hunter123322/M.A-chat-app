@@ -2,26 +2,14 @@ import bcrypt from "bcrypt";
 import mySQLConnectionPool from "../../db/mysql/mysql.connection-pool.js";
 import { RowDataPacket } from 'mysql2/promise';
 import { UserModel } from "../../model/user/user.model.js";
+import type { UserAut, UserInfo } from "../../types/User.type.js";
 
 
-const saltRound = 5;
-
-interface UserAut {
-  user_id: number;
-  username: string;
-  password: string;
-}
-
-interface UserInfo {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  age: number;
-}
 
 type UserAuthFull = UserAut & UserInfo;
 
 async function passwordHasher(password: string): Promise<string> {
+const saltRound = 5;
   try {
     const hashedPassword = await bcrypt.hash(password, saltRound);
     return hashedPassword;
@@ -53,7 +41,7 @@ async function compareEncryptedPassword<TData>(
       throw new Error("Incorrect password!");
     }
 
-    const userInfo = await initUserInfo.initUserInfo(user.user_id);
+    const userInfo = await initUserInfo.initUserInfo(user.user_id as number);
     const returnValue = { ...user, ...userInfo } as UserAuthFull;
 
     return returnValue;

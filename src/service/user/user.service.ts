@@ -1,21 +1,5 @@
 import { ResultSetHeader, Pool, PoolConnection } from "mysql2/promise";
-
-interface UserInfo {
-    firstName: string;
-    lastName: string;
-    middleName: string;
-    age: number;
-}
-
-interface UserLocation {
-    country: string;
-    region: string;
-    district: string;
-    municipality: string;
-    barangay: string;
-    zone: string;
-    house_number: string;
-}
+import type { UserInfo, UserLocation } from "../../types/User.type";
 
 export class UserTransaction {
     constructor(private pool: Pool) { }

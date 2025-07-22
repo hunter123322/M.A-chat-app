@@ -3,19 +3,10 @@ import mySQLConnectionPool from "../../../db/mysql/mysql.connection-pool.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { UserController } from "../../user.controller.js";
+import type { UserLocation } from "../../../types/User.type.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-interface UserLocation {
-  country: string;
-  region: string;
-  district: string;
-  municipality: string;
-  barangay: string;
-  zone: string;
-  house_number: string;
-}
 
 // Handle get location
 export async function getLocation(req: Request, res: Response): Promise<void> {
