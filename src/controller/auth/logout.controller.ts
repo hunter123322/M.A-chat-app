@@ -9,10 +9,8 @@ export async function logout(req: Request, res: Response): Promise<void> {
                 return res.status(500).json({ error: 'Could not log out' });
             }
 
-            // Clear the session cookie
-            res.clearCookie('connect.sid'); // Default session cookie name (adjust if needed)
+            res.clearCookie('connect.sid');
 
-            // Redirect to login or send success response
             return res.status(200).json({ success: true, message: 'Logged out successfully' });
         });
     } catch (error: any) {

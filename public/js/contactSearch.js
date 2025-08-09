@@ -96,59 +96,59 @@ messageBody.addEventListener("scroll", () => {
 
 // ???????????
 
-document.getElementById("contactList").addEventListener("click", (event) => {
-  const messageElement = document.getElementById("content");
-  messageElement.textContent = "";
+// document.getElementById("contactList").addEventListener("click", (event) => {
+//   const messageElement = document.getElementById("content");
+//   messageElement.textContent = "";
 
-  const clickedCard = event.target.closest(".contact-card");
-  if (!clickedCard) return;
+//   const clickedCard = event.target.closest(".contact-card");
+//   if (!clickedCard) return;
 
-  // Get the message and user_id in local storage
-  const localMessage = JSON.parse(localStorage.getItem("messageData")) || [];
-  const userID = localStorage.getItem("user_id");
+//   // Get the message and user_id in local storage
+//   const localMessage = JSON.parse(localStorage.getItem("messageData")) || [];
+//   const userID = localStorage.getItem("user_id");
 
-  // 1. Get data from the clicked contact card
-  const contactName = clickedCard.querySelector(".personName").textContent;
-  const contactID = clickedCard.id;
+//   // 1. Get data from the clicked contact card
+//   const contactName = clickedCard.querySelector(".personName").textContent;
+//   const contactID = clickedCard.id;
 
-  // 2. Change the display area
-  const displayDiv = document.getElementById("contactName");
-  displayDiv.textContent = `${contactName}`;
+//   // 2. Change the display area
+//   const displayDiv = document.getElementById("contactName");
+//   displayDiv.textContent = `${contactName}`;
 
-  // Optional: Add visual feedback
+//   // Optional: Add visual feedback
 
-  const filteredMessage = filterMessage(localMessage, userID, contactID);
-  filteredMessage.reverse().forEach((message) => {
-    const bool = userID == message.senderID;
-    displayMessage(message.content, bool);
-  });
-});
+//   const filteredMessage = filterMessage(localMessage, userID, contactID);
+//   filteredMessage.reverse().forEach((message) => {
+//     const bool = userID == message.senderID;
+//     displayMessage(message.content, bool);
+//   });
+// });
 
-function displayMessage(text, isMine) {
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add(isMine ? "myText" : "text");
-  messageDiv.textContent = text;
-  messageContainer.appendChild(messageDiv);
-}
+// function displayMessage(text, isMine) {
+//   const messageDiv = document.createElement("div");
+//   messageDiv.classList.add(isMine ? "myText" : "text");
+//   messageDiv.textContent = text;
+//   messageContainer.appendChild(messageDiv);
+// }
 
-function filterMessage(localMessage, senderID, receiverID) {
-  // 1. Handle case where localMessage isn't an array
-  if (!Array.isArray(localMessage)) {
-    console.error("filterMessages: Expected array, got", typeof localMessage);
-    return [];
-  }
+// function filterMessage(localMessage, senderID, receiverID) {
+//   // 1. Handle case where localMessage isn't an array
+//   if (!Array.isArray(localMessage)) {
+//     console.error("filterMessages: Expected array, got", typeof localMessage);
+//     return [];
+//   }
 
-  // 2. Use filter() instead of forEach for cleaner code
-  return localMessage.filter((message) => {
-    // 3. Check if message exists and has the property
-    if (!message || typeof message !== "object") return false;
+//   // 2. Use filter() instead of forEach for cleaner code
+//   return localMessage.filter((message) => {
+//     // 3. Check if message exists and has the property
+//     if (!message || typeof message !== "object") return false;
 
-  const isValidPair = {
-  [`${userID}-${receiverID}`]: true,
-  [`${receiverID}-${userID}`]: true
-  };
+//   const isValidPair = {
+//   [`${userID}-${receiverID}`]: true,
+//   [`${receiverID}-${userID}`]: true
+//   };
 
-// Usage:
-    if (isValidPair[`${message.senderID}-${message.receiverID}`]) return message;
-  });
-}
+// // Usage:
+//     if (isValidPair[`${message.senderID}-${message.receiverID}`]) return message;
+//   });
+// }

@@ -32,7 +32,7 @@ inputMessage?.addEventListener("keydown", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-let oldConversationID = null; // Track active conversation
+let oldConversationID = null;
 
 contactList?.addEventListener("click", (event) => {
   const clickedCard = event.target.closest(".contact-card");
@@ -50,13 +50,14 @@ contactList?.addEventListener("click", (event) => {
       .map(msg => msg.conversationID)
   )];
 
-  let currentConversationID = existingConversations[0] || generateConversationID(userID, receiverID);
+  let currentConversationID = existingConversations[0];
   conversationID = currentConversationID;
 
   if(oldConversationID === null) {
     socket.emit("joinConversation", currentConversationID); 
     oldConversationID = currentConversationID;
   } else {
+    if(oldConversationID === currentConversationID) return;
     socket.emit("joinConversation", currentConversationID);
     socket.emit("leaveRoom", oldConversationID);
     oldConversationID = currentConversationID;
@@ -82,7 +83,7 @@ function sendMessage() {
 
 // Helper Functions
 function generateConversationID(id1, id2) {
-  return `${[id1, id2].sort().join('_')}_${Date.now()}`;
+  return `${[id1, id2].sort().join('_')}}`;
 }
 
 export function isValidMessage(data) {
@@ -91,7 +92,7 @@ export function isValidMessage(data) {
 
 export function processIncomingMessage(data) {
   const isMine = data.senderID === userID;
-  displayMessage(data.content, isMine, data._id);
+  displayMessage(data.content, isMine, data._id, data.reactions, data.createdAt, data.receiverID);
 
   const exists = messages.some(m =>
     m.content === data.content &&

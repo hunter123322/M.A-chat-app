@@ -5,6 +5,21 @@ import type { MessageDataType } from "../../types/message.type";
 import type { IMessage } from "../../types/message.type";
 
 type EditMessage = { messageId: string, editedMessage: string };
+type NotificationPayload = {
+    conversationID: string;
+    senderID: string;
+    preview: string;
+    timestamp: Date;
+};
+type ReactionData = {
+    messageReaction: string,
+    userID: string,
+    messageID: string,
+}
+type DeleteMessage = {
+    messageId: string,
+}
+
 
 export function registerMessageEvents(socket: Socket) {
     socket.on("getMessage", async (latestMessage: MessageDataType, callback?: Function) => {
@@ -24,21 +39,14 @@ export function registerMessageEvents(socket: Socket) {
     });
 }
 
-type NotificationPayload = {
-    conversationID: string;
-    senderID: string;
-    preview: string;
-    timestamp: Date;
-};
-
 export function chatMessageEvent(socket: Socket, io: Server) {
     socket.on("chatMessage", async (msg: MessageDataType) => {
+        console.log(msg)
         if (!msg.content || !msg.senderID || !msg.receiverID || !msg.conversationID) {
             console.error("Invalid message format:", msg);
             return;
         }
 
-        // 1. Save message (existing logic)
         const saveMessage: MessageDataType = await postMessage(
             msg.content,
             msg.senderID,
@@ -47,10 +55,8 @@ export function chatMessageEvent(socket: Socket, io: Server) {
             msg.conversationID
         );
 
-        // 2. Broadcast to conversation room (existing)
         io.to(msg.conversationID).emit("receiveMessage", saveMessage);
 
-        // 3. Notify receiver's personal room (new) 👇
         io.to(`user:${msg.receiverID}`).emit("newMessageNotification", {
             message: saveMessage,
             conversationID: msg.conversationID,
@@ -73,12 +79,6 @@ export function editMessage(socket: Socket, io: Server) {
             io.to(updateMessage.conversationID).emit("messageEdited", updateMessage);
         }
     })
-}
-
-type ReactionData = {
-    messageReaction: string,
-    userID: string,
-    messageID: string,
 }
 
 export function messageReaction(socket: Socket, io: Server) {
@@ -114,16 +114,10 @@ export function messageReaction(socket: Socket, io: Server) {
         }
         console.log(finalMessage);
 
-
-        // Emit to room if updated
         if (finalMessage) {
             io.to(finalMessage.conversationID).emit("messageReacted", finalMessage);
         }
     });
-}
-
-type DeleteMessage = {
-    messageId: string,
 }
 
 export function deleteMessage(socket: Socket, io: Server) {

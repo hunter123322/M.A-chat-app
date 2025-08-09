@@ -1,23 +1,9 @@
 import { Request, Response } from "express";
-import path from "path";
-import { fileURLToPath } from "url";
 import mySQLConnectionPool from "../../db/mysql/mysql.connection-pool.js";
 import { UserController } from "../user.controller.js";
 import type { UserAut } from "../../types/User.type.js";
 
-
 const User = new UserController(mySQLConnectionPool);
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-async function getLogin(req: Request, res: Response): Promise<void> {
-  try {
-    res.sendFile(path.join(__dirname, "../../../public/html/login-signup.html"));
-  } catch (error) {
-    res.status(500);
-  }
-}
 
 async function postLogin(req: Request, res: Response): Promise<void> {
   try {
@@ -33,4 +19,4 @@ async function postLogin(req: Request, res: Response): Promise<void> {
   }
 }
 
-export { postLogin, getLogin };
+export { postLogin};

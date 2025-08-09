@@ -22,7 +22,12 @@ await mongoDBconnection();
 const PORT = parseInt(process.env.PORT || "3000");
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+});
 
 // Shim __dirname in ESM (Bun supports this, too)
 const __filename = fileURLToPath(import.meta.url);
@@ -35,9 +40,12 @@ app.set("trust proxy", 1);
 
 // Middleware
 app.use(setSecurityHeaders);
-app.use(cors());
 app.use(express.json());
 app.use(sessionMiddleware);
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST']
+}));
 
 // app.use(rateLimiter) //Dissable in production phase
 app.use(router);

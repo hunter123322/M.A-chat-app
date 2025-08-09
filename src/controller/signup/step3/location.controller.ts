@@ -1,21 +1,7 @@
 import { Request, Response } from "express";
 import mySQLConnectionPool from "../../../db/mysql/mysql.connection-pool.js";
-import path from "path";
-import { fileURLToPath } from "url";
 import { UserController } from "../../user.controller.js";
 import type { UserLocation } from "../../../types/User.type.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Handle get location
-export async function getLocation(req: Request, res: Response): Promise<void> {
-  try {
-    res.sendFile(path.join(__dirname, "../../../public/html/userLocation.html"));
-  } catch (error) {
-    res.status(500);
-  }
-}
 
 // Handle post location
 export async function postLocation(req: Request, res: Response): Promise<void> {

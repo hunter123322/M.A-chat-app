@@ -28,7 +28,7 @@ sortContactListByTimestamp('contactList');
 
 loadOlderMessage(content, messageBody)
 messageBody.addEventListener("scroll", () => {
-  if (messageBody.scrollTop === 0) {
+  if (messageBody.scrollTop === undefined) {
     loadOlderMessage(); 
   }
 });

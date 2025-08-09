@@ -1,6 +1,5 @@
 import { createReactionContainer, handleEmojiSelection } from "../../chatAction/reaction.helper.js";
 import { renderDeletedMessage, renderEditedMessage } from "../../chatAction/render.edited.message.js";
-import { isValidMessage } from "../../messageListaction.js";
 // import { conversationID } from "../../messageListaction.js";
 
 export function receiveEditMessage( socket ){
@@ -115,7 +114,7 @@ export function newMessageNotification(socket){
   socket.on("newMessageNotification", async (notification) => {
     const currentConversationID = contactList;
     if (currentConversationID !== notification.conversationID) {
-      console.log(notification);
+      console.log(notification, "nitification");
       const {message} = notification;
 
       messages.push({ ...message, updatedAt: new Date() });

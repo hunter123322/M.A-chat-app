@@ -1,4 +1,3 @@
-"use strict";
 document.getElementById("userForm").addEventListener("submit", async function (event) {
     event.preventDefault();
     const firstName = document.getElementById("firstName").value.trim();

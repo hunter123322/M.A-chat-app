@@ -14,11 +14,11 @@ export const getMainMessage = async (req: Request, res: Response) => {
     const { contacts, currentUser } = MainMessageService.processConversations(conversations, userId);
     const staticContacts: ContactListItem[] = [
       { id: "3", name: "new", img: "person2.webp", dataTimestamp: "2752799699925" },
-      { id: "1", name: "Charlie", img: "person1.webp", dataTimestamp: "3752799699925" }
+      { id: "4", name: "Charlie", img: "person1.webp", dataTimestamp: "3752799699925" }
     ];
     const contactList = MainMessageService.generateContactList(contacts, staticContacts);
     const viewData = MainMessageService.prepareViewData(currentUser, contactList);
-    res.render("messageList", viewData);
+    res.status(200).json(viewData)
   } catch (error) {
     res.status(500).render('error', {
       message: 'Failed to load messages',

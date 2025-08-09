@@ -1,21 +1,7 @@
 import { Request, Response } from "express";
 import mySQLConnectionPool from "../../../db/mysql/mysql.connection-pool.js";
-import path from "path";
-import { fileURLToPath } from "url";
 import { UserController } from "../../user.controller.js";
 import type { UserInfo } from "../../../types/User.type.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Handle get information
-export async function getInformation(req: Request, res: Response): Promise<void> {
-  try {
-    res.sendFile(path.join(__dirname, "../../../public/html/userInfo.html"));
-  } catch (error) {
-    res.status(500);
-  }
-}
 
 // Handle post information
 export async function postInformation(req: Request, res: Response): Promise<void> {

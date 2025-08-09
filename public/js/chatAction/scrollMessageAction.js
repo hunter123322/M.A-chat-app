@@ -1,14 +1,28 @@
 export default function loadOlderMessage(content, messageBody) {
+  if (!content || !messageBody) return;
+
   const oldScrollHeight = messageBody.scrollHeight;
+  if (typeof oldScrollHeight !== 'number') return;
 
-  for (let i = 0; i < 3; i++) {
-    const msg = document.createElement("div");
-    msg.classList.add("text"); // or "myText"
-    msg.textContent = `Earlier message ${Date.now()}`;
-    content.prepend(msg);
-  }
+  const newMessages = generateMockMessages(3);
+  newMessages.forEach(msg => content.prepend(msg));
 
-  // Maintain scroll position after inserting new content
   const newScrollHeight = messageBody.scrollHeight;
-  messageBody.scrollTop += newScrollHeight - oldScrollHeight;
+  maintainScrollPosition(messageBody, oldScrollHeight, newScrollHeight);
+}
+
+// Generates mock message elements
+function generateMockMessages(count) {
+  return Array.from({ length: count }, () => {
+    const msg = document.createElement("div");
+    msg.className = "text"; // or "myText" if needed
+    msg.textContent = `Earlier message ${Date.now()}`;
+    return msg;
+  });
+}
+
+// Adjusts scroll to maintain visual position
+function maintainScrollPosition(element, oldHeight, newHeight) {
+  const delta = newHeight - oldHeight;
+  element.scrollTop += delta;
 }

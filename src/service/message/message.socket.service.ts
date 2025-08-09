@@ -5,12 +5,12 @@ import { MessageDataType, IReaction } from "../../types/message.type";
 export async function getMessage(convoID: String, lastTimestamp: any): Promise<any[]> {
     try {
         const query = {
-            conversationalID: convoID,
-            createdAt: { $lt: lastTimestamp }
+            // conversationalID: convoID,
+            // createdAt: { $lt: lastTimestamp }
         };
 
         const messages = await Message.find(query)
-            .sort({ createdAt: -1 })
+            .sort({ createdAt: 1 })
             .limit(50);
 
         if (!messages || messages.length === 0) {

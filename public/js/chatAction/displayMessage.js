@@ -1,9 +1,6 @@
 import { MenuFunctions } from "./menu.function.js";
 import { handleEmojiSelection, createReactionContainer } from "./reaction.helper.js";
 
-const findContact = (id) => { return document.getElementById(id) }
-
-const userID = localStorage.getItem("user_id");
 
 export default function initMessage (event) {
   const messageElement = document.getElementById("content");
@@ -14,6 +11,7 @@ export default function initMessage (event) {
 
   // Get the message and user_id in local storage
   let message = JSON.parse(localStorage.getItem("messageData")) || [];
+  const userID = localStorage.getItem("user_id");
 
   // 1. Get data from the clicked contact card
   const contactName = clickedCard.querySelector(".personName").textContent;
@@ -62,81 +60,91 @@ const menuItems = [
     class: 'danger' 
   }
 ];
-let newestDate = null;
 
 export function displayMessage(text, isMine, messageId, reactions, timestamp, id) {
-  timestamp = new Date(timestamp).getTime();
-  if(newestDate === null) {
-    newestDate = timestamp;
-  } else {
-    if (newestDate < timestamp) newestDate = timestamp;
+  console.log(text, +isMine, messageId, reactions, timestamp, id);
+
+  const contactElement = document.getElementById(id);
+  if (!contactElement) return;
+
+  const currentTimestamp = new Date(timestamp).getTime();
+  const existingTimestamp = parseInt(contactElement.getAttribute("data-timestamp") || '0', 10);
+
+  if (currentTimestamp > existingTimestamp) {
+    contactElement.setAttribute("data-timestamp", currentTimestamp);
   }
-  if (isMine) findContact(id).setAttribute("data-timestamp", newestDate)
-    
 
+  const messageContainer = createMessageContainer(isMine, messageId);
+  const messageContent = createMessageContent(text);
+  messageContainer.appendChild(messageContent);
 
-  const messageContainer = document.createElement("div");
-  messageContainer.classList.add(isMine ? "myText" : "text");
-  messageContainer.id = messageId;
+  const { container, popupMenu } = createMessageMenu(isMine, messageContainer);
+  messageContent.appendChild(container);
 
+  if (Array.isArray(reactions)) {
+    const reactionContainer = createReactionContainer(messageContainer);
+    const emojiMap = aggregateReactions(reactions);
+    renderReactions(reactionContainer, emojiMap);
+  }
+
+  document.getElementById('content').appendChild(messageContainer);
+}
+
+function createMessageContainer(isMine, messageId) {
+  const container = document.createElement("div");
+  
+  if (isMine) {
+    container.classList.add("myText");
+  } else {
+    container.classList.add("text");
+  }
+  container.id = messageId;  
+  return container;
+}
+
+function createMessageContent(text) {
   const messageDiv = document.createElement("div");
   messageDiv.className = "message-content";
-  messageContainer.appendChild(messageDiv);
 
-  // Text content
-  const messageContent = document.createElement("span");
-  messageContent.textContent = text;
-  messageDiv.appendChild(messageContent);
+  const span = document.createElement("span");
+  span.textContent = text;
+  messageDiv.appendChild(span);
 
-  // Menu container
+  return messageDiv;
+}
+
+function createMessageMenu(isMine, messageContainer) {
   const container = document.createElement('div');
   container.className = 'menu-container';
-  messageDiv.appendChild(container);
 
-  // Menu button
   const menuButton = document.createElement('div');
   menuButton.className = 'menu-button';
   menuButton.textContent = '⋮';
   container.appendChild(menuButton);
 
-  // Popup menu
   const popupMenu = document.createElement('div');
   popupMenu.className = 'popup-menu';
   container.appendChild(popupMenu);
 
-  if(reactions instanceof Array) {  
-    const emojiMap = {};
+  setMenuPosition(container, popupMenu, isMine);
+  populateMenuItems(popupMenu, messageContainer);
+  attachMenuToggle(menuButton, popupMenu);
 
-    reactions.forEach(r => {
-      if (r.emoji) {
-        emojiMap[r.emoji] = (emojiMap[r.emoji] || 0) + 1;
-      }
-    });
-
-    const reactionContainer = createReactionContainer(messageContainer);
-
-    // Render each unique emoji with its count
-    Object.entries(emojiMap).forEach(([emoji, count]) => {
-      const badge = document.createElement('span');
-      badge.className = 'reaction-badge';
-      badge.textContent = count > 1 ? `${count}${emoji}` : emoji;
-      reactionContainer.appendChild(badge);
-    });
+  return { container, popupMenu };
 }
 
-  // Position based on message ownership
+function setMenuPosition(container, popupMenu, isMine) {
   if (isMine) {
     container.style.right = '0.05rem';
-    container.style.left = 'auto';
     popupMenu.style.left = '-15rem';
   } else {
     container.style.left = '0.25rem';
-    container.style.right = 'auto';
     popupMenu.style.right = '-15rem';
   }
   popupMenu.style.top = '-8.5rem';
+}
 
-  // Create menu items
+function populateMenuItems(popupMenu, messageContainer) {
   menuItems.forEach(item => {
     if (item.type === 'divider') {
       const divider = document.createElement('div');
@@ -156,32 +164,50 @@ export function displayMessage(text, isMine, messageId, reactions, timestamp, id
 
       menuItem.addEventListener('click', (e) => {
         e.stopPropagation();
-        item.action(messageContainer); // Pass the message container
+        item.action(messageContainer);
         popupMenu.classList.remove('show');
-        
-        // Visual feedback
-        menuItem.style.backgroundColor = 'rgba(0,0,0,0.1)';
-        setTimeout(() => {
-          menuItem.style.backgroundColor = '';
-        }, 300);
+        flashFeedback(menuItem);
       });
 
       popupMenu.appendChild(menuItem);
     }
   });
+}
 
-  // Toggle menu visibility
+function flashFeedback(menuItem) {
+  menuItem.style.backgroundColor = 'rgba(0,0,0,0.1)';
+  setTimeout(() => {
+    menuItem.style.backgroundColor = '';
+  }, 300);
+}
+
+function attachMenuToggle(menuButton, popupMenu) {
   menuButton.addEventListener('click', (e) => {
     e.stopPropagation();
     popupMenu.classList.toggle('show');
   });
 
-  // Close menu when clicking outside
   document.addEventListener('click', () => {
     popupMenu.classList.remove('show');
   });
+}
 
-  document.getElementById('content').appendChild(messageContainer);
+function aggregateReactions(reactions) {
+  return reactions.reduce((map, r) => {
+    if (r.emoji) {
+      map[r.emoji] = (map[r.emoji] || 0) + 1;
+    }
+    return map;
+  }, {});
+}
+
+function renderReactions(container, emojiMap) {
+  Object.entries(emojiMap).forEach(([emoji, count]) => {
+    const badge = document.createElement('span');
+    badge.className = 'reaction-badge';
+    badge.textContent = count > 1 ? `${count}${emoji}` : emoji;
+    container.appendChild(badge);
+  });
 }
 
 function filterMessage(localMessage, userID, receiverID) {
