@@ -4,20 +4,20 @@ import { joinConversationEvent } from "./event/room.event.js";
 import session from "../middleware/session.js";
 
 async function handleSocketConnection(io: Server) {
-  // io.use((socket, next) => {
-  //   session(socket.request as any, {} as any, () => next());
-  // });
+  io.use((socket, next) => {
+    session(socket.request as any, {} as any, () => next());
+  });
 
   io.on("connection", (socket) => {
-    // const user_id: number = (socket.request as any).session?.user_id;
+    const user_id: number = (socket.request as any).session?.user_id;
 
-    // if (!user_id) {
-    //   console.log("Missing user ID. Disconnecting...");
-    //   socket.disconnect();
-    //   return;
-    // }
+    if (!user_id) {
+      console.log("Missing user ID. Disconnecting...");
+      socket.disconnect();
+      return;
+    }
 
-    // socket.join(`user:${user_id.toString()}`);
+    socket.join(`user:${user_id.toString()}`);
 
     socket.on("leaveRoom", (conversationID: string) => {
       socket.leave(conversationID);

@@ -4,19 +4,27 @@ import { RowDataPacket } from 'mysql2/promise';
 import { UserModel } from "../../model/user/user.model.js";
 import type { UserAut, UserInfo } from "../../types/User.type.js";
 
-
-
 type UserAuthFull = UserAut & UserInfo;
 
 async function passwordHasher(password: string): Promise<string> {
-const saltRound = 5;
+  console.log(password)
+  if (typeof password !== "string") {
+    throw new TypeError("Password must be a string");
+  }
+
+  const saltRounds = 10;
+  if (typeof saltRounds !== "number" || isNaN(saltRounds)) {
+    throw new TypeError("Salt rounds must be a valid number");
+  }
+
   try {
-    const hashedPassword = await bcrypt.hash(password, saltRound);
-    return hashedPassword;
+    return await bcrypt.hash(password, saltRounds);
   } catch (error) {
-    throw new Error("Canot encrypt the passwords");
+    throw new Error(`Cannot encrypt the password: ${(error as Error).message}`);
+
   }
 }
+
 
 async function compareEncryptedPassword<TData>(
   username: string,

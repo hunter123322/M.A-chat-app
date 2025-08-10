@@ -1,8 +1,6 @@
 import express, {  } from "express";
 import dotenv from "dotenv";
 import { createServer } from "http";
-import path from "path";
-import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import cors from "cors";
 
@@ -24,18 +22,12 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST']
+    origin: 'http://localhost:5173', // your frontend origin
+    credentials: true
   }
 });
 
-// Shim __dirname in ESM (Bun supports this, too)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // View engine
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../views"));
 app.set("trust proxy", 1);
 
 // Middleware
@@ -49,7 +41,6 @@ app.use(cors({
 
 // app.use(rateLimiter) //Dissable in production phase
 app.use(router);
-app.use(express.static(path.resolve(__dirname, "../public")));
 
 // Initialize Socket.IO
 handleSocketConnection(io);

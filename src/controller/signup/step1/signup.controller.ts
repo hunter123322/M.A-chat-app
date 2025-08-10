@@ -8,6 +8,7 @@ export async function postSignup(req: Request, res: Response): Promise<void> {
   const userController = new UserController(mySQLConnectionPool)
   try {
     const userAut: UserAut = req.body;
+    console.log(userAut)
     if (!userAut) throw new Error("Try it again");
     const user_id = await userController.signController(userAut.username, userAut.password);
     (req.session as { user_id?: number }).user_id = user_id;

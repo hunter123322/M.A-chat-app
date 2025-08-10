@@ -17,9 +17,11 @@ const middlewareSession: SessionOptions = {
     autoRemove: "native",
   }),
   cookie: {
-    secure: process.env.NODE_ENV === "production", // secure cookies only in production
+    secure: false,
+    // secure: process.env.NODE_ENV === "production", // secure cookies only in production
     httpOnly: true, // Helps to prevent cross-site scripting attacks
     maxAge: 24 * 60 * 60 * 1000, // 1 day expiry for the cookie
+    sameSite: "lax"
   },
 };
 
