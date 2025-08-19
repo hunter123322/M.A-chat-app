@@ -49,6 +49,6 @@ export async function postMessage(
         if (!saveMessage) throw new Error("Failed to send!");
         return saveMessage;
     } catch (error: any) {
-        throw new Error("Post message Error!" + error.message);
+        throw new Error("Post message Error!");
     }
 }

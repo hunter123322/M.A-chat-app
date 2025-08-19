@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import mySQLConnectionPool from "../../db/mysql/mysql.connection-pool.js";
 import { RowDataPacket } from 'mysql2/promise';
 import { UserModel } from "../../model/user/user.model.js";
@@ -7,7 +7,6 @@ import type { UserAut, UserInfo } from "../../types/User.type.js";
 type UserAuthFull = UserAut & UserInfo;
 
 async function passwordHasher(password: string): Promise<string> {
-  console.log(password)
   if (typeof password !== "string") {
     throw new TypeError("Password must be a string");
   }
@@ -26,7 +25,7 @@ async function passwordHasher(password: string): Promise<string> {
 }
 
 
-async function compareEncryptedPassword<TData>(
+async function compareEncryptedPassword(
   username: string,
   password: string
 ): Promise<UserAuthFull> {
@@ -44,8 +43,10 @@ async function compareEncryptedPassword<TData>(
 
     const user = rows[0] as UserAut;
     const passwordMatch = await bcrypt.compare(password, user.password);
-
+    
     if (!passwordMatch) {
+      console.log(passwordMatch,);
+      
       throw new Error("Incorrect password!");
     }
 
@@ -63,3 +64,4 @@ async function compareEncryptedPassword<TData>(
 
 
 export default { passwordHasher, compareEncryptedPassword };
+export {passwordHasher, compareEncryptedPassword}

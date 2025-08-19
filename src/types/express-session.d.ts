@@ -1,11 +1,7 @@
-import "http";
 import "express-session";
 
-declare module "http" {
-  interface IncomingMessage {
-    session?: {
-      user_id?: number;
-      [key: string]: any;
-    };
+declare module "express-session" {
+  interface SessionData {
+    user_id?: number | string; // whatever type you use
   }
 }

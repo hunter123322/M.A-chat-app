@@ -25,8 +25,6 @@ export function registerMessageEvents(socket: Socket) {
     socket.on("getMessage", async (latestMessage: MessageDataType, callback?: Function) => {
         try {
             const messages = await getMessage(latestMessage.conversationID, latestMessage.createdAt);
-            console.log("Retrieved messages:", messages);
-
             if (typeof callback === "function") {
                 callback({ success: true, messages });
             }

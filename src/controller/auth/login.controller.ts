@@ -10,7 +10,7 @@ async function postLogin(req: Request, res: Response): Promise<void> {
     const userData: UserAut = req.body;
     const data = await User.loginController(userData);
 
-    (req.session as { user_id?: number }).user_id = data.user_id;
+    req.session!.user_id = data.user_id;
     res.status(200)
       .json({ message: "Login successful", user_id: data.user_id, messages: data.messages, userInfo: data.authentication });
   } catch (error: any) {

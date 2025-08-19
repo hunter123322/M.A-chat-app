@@ -10,7 +10,7 @@ const user = new UserModel(mySQLConnectionPool);
 
 type SQLConn = typeof mySQLConnectionPool;
 
-type UserAuthFull = UserAut & UserInfo;
+export type UserAuthFull = UserAut & UserInfo;
 
 type ApiResponse = {
   user_id: number;

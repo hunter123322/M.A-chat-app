@@ -1,4 +1,5 @@
 export type UserAut = {
+    created_at?: string;
     user_id?: number;
     username: string;
     password: string;

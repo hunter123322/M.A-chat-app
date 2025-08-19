@@ -20,4 +20,13 @@ router.post("/signup/information", isAuthenticated, postInformation);
 
 router.post("/signup/location", isAuthenticated, postLocation);
 
+router.get("/", (req, res) => {
+    // Check if a session exists
+    if (req.session) {
+        res.send(`You have visited this page ${req.session} times.`);
+    } else {
+        res.send('Welcome, please refresh the page!');
+    }
+    console.log(req.session, req.sessionID);           // print all headers
+})
 export default router;

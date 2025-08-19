@@ -2,27 +2,26 @@ import { randomUUID } from "crypto";
 import session, { SessionOptions } from "express-session";
 import MongoStore from "connect-mongo";
 
-
-const middlewareSession: SessionOptions = {
-  genid: function (req) {
-    return randomUUID(); // use UUIDs for session IDs
+const middlewareSession = session({
+  genid: function () {
+    return randomUUID(); // generate UUIDs for session IDs
   },
-  secret: "keyboard cat",
+  secret: process.env.SESSION_SECRET || "keyboard cat", // use env var in prod
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false, // safer: only save sessions when modified
   store: MongoStore.create({
-    mongoUrl: "mongodb://localhost:27017/session",
-    collectionName: "session",
-    ttl: 24 * 60 * 60,
+    mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/session",
+    collectionName: "sessions",
+    ttl: 24 * 60 * 60, // session lifetime in seconds (1 day)
     autoRemove: "native",
   }),
   cookie: {
-    secure: false,
-    // secure: process.env.NODE_ENV === "production", // secure cookies only in production
-    httpOnly: true, // Helps to prevent cross-site scripting attacks
-    maxAge: 24 * 60 * 60 * 1000, // 1 day expiry for the cookie
-    sameSite: "lax"
+    httpOnly: true, // prevents JS access to cookies
+    secure: process.env.NODE_ENV === "production", // only send over HTTPS in prod
+    // secure: false,
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    sameSite: "lax", // helps protect against CSRF
   },
-};
+});
 
-export default session(middlewareSession);
+export default middlewareSession
