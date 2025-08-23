@@ -14,7 +14,7 @@ const messageSchema = new Schema<IMessageDocument>(
   {
     senderID: { type: String, required: true },
     receiverID: { type: String, required: true },
-    conversationID: { type: String, required: true },
+    conversationID: { type: String, required: true, index: true },
     content: { type: String, required: true },
     contentType: {
       type: String,

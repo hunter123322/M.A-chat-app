@@ -69,14 +69,14 @@ describe("Message Service", () => {
             const lastTimestamp = new Date("2025-08-09T09:47:11.447+00:00");
 
             const result = await getMessage(convoId, lastTimestamp);
-            
+
             expect(mockFind).toHaveBeenCalledWith({
-                conversationalID: convoId,
-                createdAt: { $lt: lastTimestamp },
+                createdAt: { $gt: lastTimestamp }
             });
 
             expect(result).toEqual([sampleMessage]);
         });
+
 
 
         test("should throw if no messages found", async () => {

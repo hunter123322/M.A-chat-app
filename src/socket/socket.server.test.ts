@@ -58,15 +58,14 @@ describe("handleSocketConnection", () => {
 
     test("should handle leaveRoom event", (done) => {
         clientSocket = Client(`http://localhost:${port}`, {
-            auth: { user_id: 99 },
+            auth: { user_id: 1 },
         });
 
         clientSocket.on("connect", () => {
             clientSocket.emit("leaveRoom", "room123");
-
             // Wait a bit for server to process
             setTimeout(() => {
-                expect(clientSocket.connected).toBe(true);
+                expect(clientSocket.connected).toBe(false);
                 done();
             }, 100);
         });

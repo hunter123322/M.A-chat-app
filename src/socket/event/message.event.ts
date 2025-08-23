@@ -26,7 +26,7 @@ export function registerMessageEvents(socket: Socket) {
         try {
             const messages = await getMessage(latestMessage.conversationID, latestMessage.createdAt);
             if (typeof callback === "function") {
-                callback({ success: true, messages });
+                callback({ success: true, messages: messages });
             }
         } catch (error: any) {
             console.error("Error in getMessage:", error);

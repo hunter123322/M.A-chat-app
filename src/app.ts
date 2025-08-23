@@ -10,7 +10,7 @@ import sessionMiddleware from "./middleware/session.js";
 import mongoDBconnection from "./db/mongodb/mongodb.connection.js";
 import router from "./routes/router.js";
 import handleSocketConnection from "./socket/socket.server.js";
-import { setSecurityHeaders } from "./middleware/securityHeaders.js";
+import { setSecurityHeaders } from "./middleware/security.headers.js";
 import session from "./middleware/session.js";
 
 dotenv.config();

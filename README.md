@@ -49,7 +49,7 @@ This project is built not just to function as a chat app, but as a learning plat
 | Layer          | Technology                             |
 |----------------|----------------------------------------|
 | **Frontend**   | simpe ui and vanilla html, css, js     |
-| **Backend**    | Node.js, Express.js                    |
+| **Backend**    | Node.js, Express.js, bun               |
 | **Real-time**  | Socket.IO or WebSocket                 |
 | **Database**   | MongoDB (NoSQL) + MySQL (SQL)          |
 | **Auth & Sessions** | Express-Session, Cookies          |

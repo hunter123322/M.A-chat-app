@@ -2,16 +2,26 @@ import Message from "../../model/messages.model";
 import { randomUUID } from "crypto";
 import { MessageDataType, IReaction } from "../../types/message.type";
 
-export async function getMessage(convoID: String, lastTimestamp: any): Promise<any[]> {
+type QueryData = {
+    conversationID?: string,
+    createdAt?: {
+        $lt?: Date,
+        $gt?: Date
+    }
+}
+
+export async function getMessage(convoID: string, lastTimestamp: any): Promise<any[]> {
     try {
-        const query = {
-            conversationalID: convoID,
-            createdAt: { $lt: lastTimestamp }
+        let query: QueryData = {
+            createdAt: { $gt: new Date(lastTimestamp) }
         };
 
-        const messages = await Message.find(query)
-            .sort({ createdAt: 1 })
-            .limit(50);
+        if (!lastTimestamp) {
+            query = {conversationID: convoID}
+        }
+
+        console.log(query);
+        const messages = await Message.find(query).limit(100)
 
         if (!messages || messages.length === 0) {
             throw new Error("No messages found");
@@ -23,6 +33,7 @@ export async function getMessage(convoID: String, lastTimestamp: any): Promise<a
         throw new Error("Failed to retrieve messages: " + error.message);
     }
 }
+
 
 export async function postMessage(
     content: String,

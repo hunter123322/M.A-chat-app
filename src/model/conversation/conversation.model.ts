@@ -10,11 +10,12 @@ const Participant = new Schema<Participant>({
 }, { _id: false, versionKey: false });
 
 const ConversationSchema = new Schema<Conversation>({
+    userID: { type: String, required: true, trim: true, unique: true },
     participant: [Participant],
-    contactID: { type: String, required: true, trim: true }
+    contactID: { type: String, required: true, trim: true },
 },
     {
-        timestamps: true, 
+        timestamps: true,
         versionKey: false,
         collection: "conversationList"
     }

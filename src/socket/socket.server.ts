@@ -1,15 +1,15 @@
 import { Server } from "socket.io";
 import { chatMessageEvent, deleteMessage, editMessage, messageReaction, registerMessageEvents } from "./event/message.event.js";
 import { joinConversationEvent } from "./event/room.event.js";
+import { initContact } from "./event/contact.event.js";
 
 async function handleSocketConnection(io: Server) {
 
 
   io.on("connection", (socket) => {
-    const user_id = socket.handshake.auth.user_id;
-    const id: number = (socket.request as any).session?.user_id;
+    const user_id: number = (socket.request as any).session?.user_id;
 
-    console.log(user_id, id);
+    console.log(user_id);
     
 
     if (!user_id) {
@@ -20,7 +20,6 @@ async function handleSocketConnection(io: Server) {
 
     socket.join(`user:${user_id}`);
     console.log(`User ${user_id} connected with session ID:`, (socket.request as any).sessionID);
-
     socket.on("leaveRoom", (conversationID: string) => {
       socket.leave(conversationID);
       console.log(conversationID, socket.rooms);
@@ -28,6 +27,7 @@ async function handleSocketConnection(io: Server) {
 
     registerMessageEvents(socket);
     joinConversationEvent(socket);
+    initContact(socket)
     chatMessageEvent(socket, io);
     editMessage(socket, io)
     messageReaction(socket, io)

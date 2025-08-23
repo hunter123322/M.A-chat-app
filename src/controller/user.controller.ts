@@ -5,6 +5,8 @@ import userSignupValidation from "../validation/user.signup.validation";
 import { UserModel } from "../model/user/user.model";
 import { IMessageDocument } from "../model/messages.model";
 import type { UserInfo, UserLocation, UserAut } from "../types/User.type";
+import { Contact } from "../model/contact/contact.list.model";
+import { ConversationList } from "../model/conversation/conversation.model";
 
 const user = new UserModel(mySQLConnectionPool);
 
@@ -58,4 +60,5 @@ export class UserController {
     };
   }
 }
+
 

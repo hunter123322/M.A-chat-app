@@ -7,6 +7,8 @@ export type Participant = {
 }
 
 export type Conversation = {
+    userID: string,
     participant: Array<Participant>,
-    contactID: string
+    contactID: string,
+    _id?: boolean
 }

@@ -25,6 +25,7 @@ describe("MainMessageService", () => {
     // Conversations now include `contactID`
     const sampleConversations: Conversation[] = [
         {
+            userID: "1",
             contactID: "456",
             participant: [
                 {
@@ -44,6 +45,7 @@ describe("MainMessageService", () => {
             ],
         },
         {
+            userID: "1",
             contactID: "789",
             participant: [
                 {
