@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { SQLConn } from "../../db/mysql/mysql.connection-pool";
 
-async function searchContact(req: Request, res: Response) {
+export async function searchContact(req: Request, res: Response) {
     try {
         const dbConnection = await SQLConn;
 
@@ -35,4 +35,3 @@ async function searchContact(req: Request, res: Response) {
     }
 }
 
-export { searchContact };

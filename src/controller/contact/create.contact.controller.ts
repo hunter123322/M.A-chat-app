@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import mongoDBconnection from "../../db/mongodb/mongodb.connection";
-import type { Participant } from "../../types/conversation.list.type";
 import { ConversationList } from "../../model/conversation/conversation.model";
 import { Contact } from "../../model/contact/contact.list.model";
+import type { Participant } from "../../types/conversation.list.type";
 
 type ContactQuery = {
-    participant: Participant[],
+    participant: Participant,
     contactID: string
 }
 
@@ -16,6 +16,7 @@ export async function createContact(req: Request, res: Response) {
 
         const query: ContactQuery = req.query as any;
         if (!query) {
+            console.log("Empty query");
             throw new Error("Try again");
         }
 
@@ -33,10 +34,17 @@ export async function createContact(req: Request, res: Response) {
         const addContact = await Contact.findOneAndUpdate(
             { userID: user_id },
             { $push: { conversationID: createConversation._id } },
-            { new: true } // returns the updated doc
+            { new: true }
         );
 
-        if (!addContact) {
+        // Add to the ContactList of receiver in mongoDB
+        const addReceiverContact = await Contact.findOneAndUpdate(
+            { userID: query.participant.userID },
+            { $push: { conversationID: createConversation._id } },
+            { new: true } 
+        );
+
+        if (!addContact || !addReceiverContact) {
             throw new Error("Failed to create Contact!");
         }
 

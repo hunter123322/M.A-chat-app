@@ -7,6 +7,7 @@ import { postLocation } from "../controller/signup/step3/location.controller.js"
 import { postSignup } from "../controller/signup/step1/signup.controller.js";
 import { apiAuthCheck } from "../controller/auth/api.auth.check.controller.js";
 import { searchContact } from "../controller/contact/search.contact.controller.js";
+import { createContact } from "../controller/contact/create.contact.controller.js";
 
 const router = express.Router();
 
@@ -26,6 +27,9 @@ router.post("/signup/location", isAuthenticated, postLocation);
 router.get('/apiAuthCheck', apiAuthCheck)
 
 router.get("/contact/search", isAuthenticated, searchContact);
+
+router.get("/contact/create", isAuthenticated, createContact);
+
 
 
 
