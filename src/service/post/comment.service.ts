@@ -3,53 +3,61 @@ import { CommentModel } from "../../model/post/comment.mongo.model";
 import { PostModel } from "../../model/post/post.mongo.model";
 import type { CommentType } from "../../types/post/comment.type";
 import { NotificationService } from "../notification/notification.service";
+
 export class Comment {
-    static async create(commentData: CommentType): Promise<CommentType | undefined> {
+    static async create(commentData: CommentType): Promise<CommentType> {
         try {
-            if (!commentData) throw new Error("Retry the comment!")
+            if (!commentData) throw new Error("Retry the comment!");
+            // Create the comment
             const data = await CommentModel.insertOne(commentData);
-            if (!data) {
-                throw new Error("Failed to create comment(s)");
-            }
-
-            // Increment commentCount by 1
-            const updatedPostDOc = await PostModel.findByIdAndUpdate(
-                data.postID, { $inc: { commentCount: 1 } }, { new: true }
+            if (!data) throw new Error("Failed to create comment(s)");
+            // Increment commentCount
+            const updatedPostDoc = await PostModel.findByIdAndUpdate(
+                data.postID,
+                { $inc: { commentCount: 1 } },
+                { new: true }
             );
-            if (!updatedPostDOc || !updatedPostDOc.author || !updatedPostDOc.author.id) {
-                throw new Error("Updated post not found or missing author — skipping notification");
+            if (!updatedPostDoc || !updatedPostDoc.author?.id) {
+                console.warn("Updated post not found or missing author — skipping notification");
+                return data;
             }
-
-            // if (updatedPostDOc.author.id === commentData.author.id) {
-            //     // console.info("User liked their own post — skipping notification");
-            //     return data;
-            // }
-
+            // Skip if author comments on their own post
+            if (updatedPostDoc.author.id === commentData.author.id) return data;
+            // Prepare notification payload
             const notificationData = {
-                userID: updatedPostDOc.author.id,
+                userID: updatedPostDoc.author.id,
                 engagementID: data._id,
                 actor: commentData.author,
-                categories: "comment" as "comment",
+                categories: "comment" as const,
                 content: "",
                 read: false
             };
-
+            // Create notification in your DB or service
             const newNotification = await NotificationService.create(notificationData);
-
-            await axios.post("http://localhost:3001/internal/notify",
-                { notificationData, newNotification },
-                {
-                    headers: {
-                        "x-api-key": process.env.INTERNAL_API_KEY,
-                    },
+            /**
+             * Attempt to send notification to server:3001 (non-blocking)
+             * 
+             * So the reason why i separate this is when im making the CRUD opperation
+             * in REST APIs, the server for notification is off.
+             */
+            (async () => {
+                try {
+                    await axios.post("http://localhost:3001/internal/notify",
+                        { notificationData, newNotification },
+                        { headers: { "x-api-key": process.env.INTERNAL_API_KEY } }
+                    );
+                } catch (notifyErr: any) {
+                    console.warn("⚠ Failed to send notification to server 3001:", notifyErr.message);
                 }
-            );
+            })();
 
-            return data
+            return data;
         } catch (error: any) {
+            console.error("❌ Error in create comment:", error.message);
             throw new Error("Failed to create comment(s)");
         }
     }
+
 
     static async delete(commentID: string, userID: number): Promise<void> {
         if (!commentID || !userID) {

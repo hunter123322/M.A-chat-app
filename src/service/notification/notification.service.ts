@@ -22,8 +22,8 @@ export class NotificationService {
     static async delete(ID: string) {
         try {
             const deletedDoc = await NotificationModel.deleteOne({ _id: ID });
-            if (deletedDoc.deletedCount === 0)
-                throw new Error("Notification not found or failed to delete");
+            if (deletedDoc.deletedCount === 0) throw new Error("Notification not found or failed to delete");
+            return deletedDoc
         } catch (error) {
             throw new Error("Error while deleting the notification");
         }

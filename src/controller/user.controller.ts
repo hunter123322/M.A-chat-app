@@ -62,7 +62,7 @@ export class UserController {
     return { userProfileData, myPosts }
   }
 
-  public async loginController(data: UserAut): Promise<ApiResponse> {
+  public async loginController(data: { email: string; password: string; }): Promise<ApiResponse> {
     const authentication = await passwordController.compareEncryptedPassword(data.email, data.password);
     if (!authentication) {
       throw new Error("Invalid Login!");

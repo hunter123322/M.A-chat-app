@@ -240,7 +240,7 @@ class Post {
         try {
             const postObjectId = new mongoose.Types.ObjectId(postId);
 
-            const postDocuments = await PostModel.aggregate([
+            const posts = await PostModel.aggregate([
                 {
                     $match: { _id: postObjectId },
                 },
@@ -275,15 +275,39 @@ class Post {
                 },
             ]);
 
-            if (!postDocuments.length) throw new Error("Post not found");
+            if (posts.length === 0) throw new Error("Post not found");
 
-            // ✅ Populate related post for shared posts
-            const populatedPost = await PostModel.populate(postDocuments, {
+            // Generate temporary URLs for any image posts
+            for (const post of posts) {
+                let presignedUrl = '';
+                if (post.imageUrl?.key && post.imageUrl?.mimeType) {
+                    presignedUrl = blob.presign(post.imageUrl.key, {
+                        method: "GET",
+                        expiresIn: 60 * 60 // 1 hour
+                    });
+                }
+                post.imageUrl = presignedUrl;
+            }
+
+            // Populate the posts if it's shared
+            const populated = await PostModel.populate(posts, {
                 path: "shared.post",
-                model: "Post",
-            });
+                model: "Post"
+            }) as any[];
 
-            return populatedPost;
+            // Generate temporary URLs for any shared posts image
+            for (const post of populated) {
+                let presignedUrl = '';
+                if (post.shared.isSharedPost && post.shared?.post.imageUrl?.key && post.shared?.post.imageUrl?.mimeType) {
+                    presignedUrl = blob.presign(post.shared?.post.imageUrl.key, {
+                        method: "GET",
+                        expiresIn: 60 * 60 // 1 hour
+                    });
+                    post.shared.post.imageUrl.key = presignedUrl;
+                }
+            }
+
+            return populated
         } catch (error) {
             console.error(error);
             throw new Error("Error fetching post by ID");
@@ -296,7 +320,7 @@ class Post {
                 {
                     $match: {
                         "author.id": userID,
-                        createdAt: { $gte: timestamp }
+                        createdAt: { $lt: timestamp }
                     }
                 },
                 { $sort: { createdAt: -1 } },
@@ -351,16 +375,16 @@ class Post {
             // Generate temporary URLs for any shared posts image
             for (const post of populated) {
                 let presignedUrl = '';
-                if (post.shared?.post.imageUrl?.key && post.shared?.post.imageUrl?.mimeType) {
+                if (post.shared.isSharedPost && post.shared?.post.imageUrl?.key && post.shared?.post.imageUrl?.mimeType) {
                     presignedUrl = blob.presign(post.shared?.post.imageUrl.key, {
                         method: "GET",
                         expiresIn: 60 * 60 // 1 hour
                     });
+                    post.shared.post.imageUrl.key = presignedUrl;
                 }
-                post.imageUrl = presignedUrl;
             }
 
-            return populated;
+            return populated
         } catch (error) {
             throw new Error("Error in fetching posts by timestamp");
         }

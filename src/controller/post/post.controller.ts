@@ -32,7 +32,10 @@ export class PostController {
 
     static async getByTimestamp(req: AuthRequest, res: Response): Promise<void> {
         try {
-            const { since } = req.query; // expects /posts/timestamp?since=...
+            const since = req.query.lastTimestamp
+            const userID = req.query.id
+            console.log(req.query);
+            
 
             if (!since) {
                 res.status(400).json({ message: "Timestamp query 'since' is required" });
@@ -45,8 +48,8 @@ export class PostController {
                 return;
             }
 
-            const posts = await Post.findByTimestamp(timestamp, 1);
-            res.status(200).json({ data: posts });
+            const posts = await Post.findByTimestamp(timestamp, Number(userID));
+            res.status(200).json(posts);
         } catch (error: any) {
             console.error("❌ Get Posts by Timestamp Error:", error);
             res.status(500).json({ message: "Failed to get posts by timestamp" });
@@ -61,11 +64,6 @@ export class PostController {
             const postData = {
                 author: JSON.parse(author),
                 caption: caption
-            }
-
-            if (!file) {
-                res.status(400).json({ message: "No file uploaded" });
-                return
             }
 
             if (!postData) {
@@ -158,8 +156,7 @@ export class PostController {
             const id = req.query.id;
             const category = req.query.categories as string
             const categories = category.slice(1, -1).split(',') as any
-
-            console.log(req.query, categories);
+            console.log(req.cookies);
             
             const post = await Post.init(Number(id), categories);
             if (!post || post.length === 0) {

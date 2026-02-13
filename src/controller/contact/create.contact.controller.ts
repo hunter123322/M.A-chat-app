@@ -12,8 +12,6 @@ type ContactQuery = {
     contactID: string
 }
 
-
-
 type AuthRequest<T = any> = Request<unknown, unknown, T> & {
     user?: JWTPayload;
 };
@@ -28,22 +26,25 @@ export async function createContact(req: AuthRequest, res: Response) {
     try {
         let query: ContactQuery = req.body as any;
 
-        const user_id = (req.user?.user_id)?.toString();
-        if (!user_id) throw new Error("user id required")
+        if (!req.user || !req.user.author || !req.user.user_id) throw new Error("user required")
 
+        const user_id = (req.user?.user_id)?.toString();
 
         let receiver: Participant = query.participant
         if (!receiver?.userID) throw new Error("receiver id required")
+
         receiver.userID = receiver.userID
 
         const users_info: UserInfo = await initUserInfo(+user_id)
         if (!users_info) throw new Error("Failed");
+
         const sender: Participant = {
             userID: users_info.user_id as number,
             firstName: users_info.firstName,
             lastName: users_info.lastName,
             nickname: "",
-            mute: false
+            mute: false,
+            author: req.user?.author
         }
 
         const newConversationID = conversationIDSorter(user_id, receiver.userID.toString())

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import mySQLConnectionPool from "../../../db/mysql/mysql.connection-pool.js";
 import { UserController } from "../../user.controller.js";
 import type { UserAut } from "../../../types/User.type.js";
-import { generateToken } from "../../../middleware/auth.middleware.js";
+import { generateToken } from "../../../middleware/authentication.js";
 
 export async function postSignup(req: Request, res: Response): Promise<void> {
   const userController = new UserController(mySQLConnectionPool);
@@ -51,16 +51,16 @@ export async function postSignup(req: Request, res: Response): Promise<void> {
     );
 
     // ✅ Generate JWT token
-    const token = generateToken({
-      user_id,
-      username: userAut.username,
-    });
+    // const token = generateToken({
+    //   user_id,
+    //   username: userAut.username,
+    // });
 
     // ✅ Return success
     res.status(200).json({
       message: "Signup successful",
       user_id,
-      token,
+      // token,
     });
   } catch (error: any) {
     console.error("Error during signup:", error);

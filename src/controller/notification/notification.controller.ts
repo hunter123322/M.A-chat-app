@@ -53,7 +53,7 @@ export class NotificationController {
             const data = req.body;
             const userID = req.user?.user_id
             console.log(data._id);
-            
+
 
             if (!data?._id) {
                 res.status(400).json({ message: "Notification ID is required" });
@@ -108,7 +108,6 @@ export class NotificationController {
         }
     }
 
-    // TODO: Need to refactor that every 2months will delete notification 2months old
     static async delete(req: AuthRequest, res: Response) {
         try {
             const { id } = req.params;
@@ -116,11 +115,19 @@ export class NotificationController {
                 res.status(400).json({ message: "Missing notification ID" });
                 return
             }
-            await NotificationService.delete(id);
+
+            const deleted = await NotificationService.delete(id);
+            if (!deleted) {
+                res.status(404).json({ message: "Notification not found" });
+                return
+            }
+
             res.status(200).json({ message: "Notification deleted successfully" });
         } catch (error) {
-            console.error("Error deleting notification:", error);
+            console.error("❌ Error deleting notification:", error);
             res.status(500).json({ message: "Failed to delete notification" });
         }
     }
+
+    // TODO: Need to refactor that every 2months will delete notification 2months old
 }

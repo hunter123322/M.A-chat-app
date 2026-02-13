@@ -15,8 +15,9 @@ import { LikeController } from "../controller/post/like.controller.js";
 import { NotificationController } from "../controller/notification/notification.controller.js";
 import { Search } from "../controller/user/search.user.controller.js";
 import { blob } from "../db/blob/blob.js";
-import { s3, write } from "bun";
 import multer from "multer";
+import { Avatar } from "../controller/profile/avatar.change.controller.js";
+import { TokenController } from "../controller/token/token.controller.js";
 const upload = multer({ storage: multer.memoryStorage() });
 
 
@@ -34,11 +35,12 @@ router.get('/apiAuthCheck', authenticateToken, apiAuthCheck)
 router.get("/contact/search", searchContact);
 router.post("/contact/create", authenticateToken, createContact);
 router.get("/user/profile/init", authenticateToken, initProfile)
+router.put('/profile/avatar', authenticateToken, Avatar.change)
 
 router.get("/posts/:id", authenticateToken, PostController.getById);
-// Unprotected routes
 router.get("/post/findByUser", PostController.findByUser)
-router.get("/post/timestamp", authenticateToken, PostController.getByTimestamp);
+router.get("/post/feed/init", authenticateToken, PostController.feedInit)
+router.get("/post/get/timestamp", authenticateToken, PostController.getByTimestamp);
 router.post("/post/create", upload.single("file"), authenticateToken, PostController.create)
 router.post("/post/share", authenticateToken, PostController.share)
 router.put("/post/update", authenticateToken, PostController.update)
@@ -46,8 +48,6 @@ router.delete("/post/delete", authenticateToken, PostController.delete)
 
 router.get("/post/comment/get", authenticateToken, CommentController.get)
 router.get("/post/comment/getMore", authenticateToken, CommentController.loadMoreComment)
-// Unprotected routes
-router.get("/post/feed/init", PostController.feedInit)
 router.post("/post/comment/create", authenticateToken, CommentController.create)
 router.delete("/post/comment/delete", authenticateToken, CommentController.delete)
 
@@ -57,8 +57,11 @@ router.post("/post/unlike", authenticateToken, LikeController.unlike)
 router.get("/notification/init", authenticateToken, NotificationController.init)
 router.post("/notification/read/one", authenticateToken, NotificationController.read)
 router.post("/notification/read/all", authenticateToken, NotificationController.markAllAsRead)
+router.delete("/notification/delete/one/:id", authenticateToken, NotificationController.delete)
 
 router.get("/search/user", authenticateToken, Search.user)
+
+router.get("/v1/token/refresh", TokenController.refresh)
 
 
 
